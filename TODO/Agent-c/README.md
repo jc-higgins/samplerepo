@@ -2,7 +2,9 @@
 
 Scratchpad and checklists for the React dashboard in [`specs/agent-c-frontend.md`](../specs/agent-c-frontend.md). Contract and endpoints: [`specs/01-mvp-split.md`](../specs/01-mvp-split.md).
 
-Hackathon **demo clarity** (~90s): finish numbered slices so the judge path in [`demo/README.md`](../demo/README.md) is one continuous flow.
+**Overview vs Dashboard:** The polished **landing** (`Landing.jsx`) is the default route for judge-facing demos. The **dashboard** (`DashboardShell.jsx`) is toggled from `App.jsx` (top-right **Overview | Dashboard** or **Open demo dashboard** on the hero). These TODOs **only extend functionality inside the dashboard**—they must not strip or replace the landing unless we explicitly decide to.
+
+Hackathon **demo clarity** (~90s): finish numbered slices so the judge path is one continuous flow from Overview → Dashboard with live panels.
 
 ## Files in this folder
 

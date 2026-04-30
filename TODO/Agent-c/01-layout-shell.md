@@ -1,6 +1,8 @@
 # 01 — Layout shell
 
-**Spec:** [`specs/agent-c-frontend.md`](../specs/agent-c-frontend.md) (layout diagram, “Replace `App.jsx` with the dashboard”).
+**Where it lives:** [`frontend/src/DashboardShell.jsx`](../../frontend/src/DashboardShell.jsx) (switch from **Overview** in [`App.jsx`](../../frontend/src/App.jsx)). The marketing **landing** stays in [`Landing.jsx`](../../frontend/src/Landing.jsx).
+
+**Spec:** [`specs/agent-c-frontend.md`](../specs/agent-c-frontend.md) (layout diagram; functional dashboard for the MVP demo).
 
 ## Checklist
 
