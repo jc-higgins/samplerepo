@@ -1,6 +1,6 @@
 # Agent A — Mock Data & Fixtures
 
-**Read first:** `specs/01-mvp-split.md` (shared contract). All shapes below come from there.
+**Read first:** `specs/01-mvp-split.md` (shared contract). All shapes below come from there. Rubric context (workflow value, 90s demo): `specs/README.md`.
 
 **Mission:** Produce realistic-looking synthetic fixtures for bank, cloud-cost, email, WhatsApp, and invoice data. Everyone else is blocked on you for the first ~15 minutes, so ship a thin first pass fast, then enrich.
 

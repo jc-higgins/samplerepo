@@ -133,3 +133,7 @@ CORS already allows `localhost:5173`.
 1. `uv run uvicorn hackathon_backend.main:app --reload --port 8000` serves all endpoints with non-empty data.
 2. `npm run dev` shows a dashboard with three panels populated from the API: **Statements** (drill-down on a transaction shows AWS breakdown + waste flag), **Invoices** (each card shows a LEGIT/SUSPICIOUS/UNKNOWN badge with reasoning), **Actions & Cashflow** (action cards with Approve button + a 90-day projected balance line).
 3. The "demo story" from `specs/README.md` works end-to-end: AWS transaction → drill-down → invoice card legit → unknown-supplier card suspicious → approve a savings action → forecast updates (or just refreshes).
+
+### Rubric note (judges)
+
+This MVP targets **technical execution** (working API + UI), **human-in-the-loop** (confidence, badges, approve gate), **track fit** (Financial Intelligence flows), **concrete workflow value** (statement → payables → action), and **demo clarity** (~90s path). Full criterion text: event [`/api/event-format`](https://cusor-hack-london-2026-1.vercel.app/api/event-format) → `rubric`. Bonus scoring (Cursor / Specter / LLM) is separate — see `specs/README.md`.

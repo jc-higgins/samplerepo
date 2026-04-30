@@ -9,7 +9,7 @@ It does not only analyze finances; it takes action:
 - Automates finance operations (invoice chasing, payment timing optimization).
 
 Core principle: **safe autonomy over blind autonomy**.
-Every action is scored with confidence and tested against realistic financial scenarios (Spectre-style testing) before execution.
+Every action is scored with confidence and checked against policy thresholds before execution. Optional **Specter** (API/MCP) market-intelligence hooks can strengthen context beyond the MVP fixtures — relevant for the **Best use of Specter** bonus bucket.
 
 ---
 
@@ -33,6 +33,20 @@ make demo     # FastAPI + Vite in one terminal; Ctrl+C stops both
 ## Hackathon MVP & specs
 
 The **~1 hour MVP** is defined in `[specs/01-mvp-split.md](specs/01-mvp-split.md)`: shared JSON shapes (transactions with optional **enrichment** such as cloud line items and waste flags, invoices with **verification**, action plans, 90-day cashflow points), a single **API table**, and a **definition of done** (backend serves all endpoints with data; frontend dashboard shows **Statements** with drill-down, **Invoices** with badges, **Actions & cashflow** with approve + SVG forecast). Integrations and “agents” are **mocked / rule-based** for the MVP — no real bank, Gmail, or WhatsApp, and no LLM calls — as spelled out in that spec.
+
+### Judging rubric alignment (10-point model)
+
+Event site: [Cursor × Briefcase · London 2026](https://cusor-hack-london-2026-1.vercel.app). Canonical criterion text (same JSON the site uses for judge panels): [`/api/event-format`](https://cusor-hack-london-2026-1.vercel.app/api/event-format).
+
+| Area | Points | How AutoCFO addresses it |
+| --- | --- | --- |
+| Concrete workflow value | 2 | Compresses founder CFO work: explain charges, triage payables, approve guarded actions, see runway. |
+| Track fit | 2 | **Financial Intelligence** — categorise, explain lines, fraud signals, confidence; movement of money is policy-gated / mocked in MVP. |
+| Human-in-the-loop decision | 1 | Confidence thresholds, `review_flag`, `requires_human_review`, `execution_mode`, escalation rules below; prefer `REQUEST_HUMAN` when uncertain. |
+| Technical execution | 1 | Contract-first API, FastAPI + React, working drill-down and approve path (`make demo`). |
+| Demo clarity | 1 | Script in `[specs/README.md](specs/README.md)` — rehearse to **~90 seconds**. |
+
+**Judge bonus (+3 max, 1+1+1):** **Cursor** — ship with Cursor (agents, rules, SDK story); **Specter** — add market-intelligence (API/MCP) when you integrate it; **LLM models** — MVP is intentionally non-LLM; claim this bucket only if you add real model use (APIs, routing, evals) and can show it. See `[specs/README.md](specs/README.md)` for detail.
 
 Parallel work is split into three briefs (read `01-mvp-split.md` first):
 

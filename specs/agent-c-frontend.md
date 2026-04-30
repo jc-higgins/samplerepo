@@ -2,7 +2,7 @@
 
 **Read first:** `specs/01-mvp-split.md` (shared contract + endpoint table). The shapes there are what you'll be rendering.
 
-**Mission:** Build the AutoCFO dashboard in the existing Vite + React app. Three panels: Statements (with drill-down), Invoices (with verification badge), Actions & Cashflow. Calls Agent B's API. Should look credible in a 2-minute demo, not pretty.
+**Mission:** Build the AutoCFO dashboard in the existing Vite + React app. Three panels: Statements (with drill-down), Invoices (with verification badge), Actions & Cashflow. Calls Agent B's API. Should read clearly in a **~90 second** judge demo (`demo/README.md`), not necessarily polished visual design.
 
 **Time budget:** 45 min.
 

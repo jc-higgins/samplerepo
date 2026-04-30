@@ -1,6 +1,6 @@
 # Agent B — Backend Agents API
 
-**Read first:** `specs/01-mvp-split.md` (shared contract + endpoint table). Stay inside that contract.
+**Read first:** `specs/01-mvp-split.md` (shared contract + endpoint table). Stay inside that contract. Rubric: populate confidence, review flags, and modes honestly for **human-in-the-loop** scoring — see `specs/README.md`.
 
 **Mission:** Wire FastAPI endpoints that return data shaped exactly like the contract. Behind each endpoint is a tiny rule-based "agent" function that reads fixtures from Agent A and decorates them with `category`, `confidence`, `verification`, `next_step`, etc. No LLM calls, no real integrations — pure Python heuristics.
 

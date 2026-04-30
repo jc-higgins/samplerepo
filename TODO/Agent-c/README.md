@@ -2,6 +2,8 @@
 
 Scratchpad and checklists for the React dashboard in [`specs/agent-c-frontend.md`](../specs/agent-c-frontend.md). Contract and endpoints: [`specs/01-mvp-split.md`](../specs/01-mvp-split.md).
 
+Hackathon **demo clarity** (~90s): finish numbered slices so the judge path in [`demo/README.md`](../demo/README.md) is one continuous flow.
+
 ## Files in this folder
 
 | File | Topic |
