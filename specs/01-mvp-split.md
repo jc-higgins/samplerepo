@@ -129,6 +129,11 @@ All three agents must agree on these shapes. If you need to change one, update t
 | GET    | `/cashflow/summary`        | `CashflowSummary` (header data)  |
 | GET    | `/cloud/cost-summary`      | `CloudCostSummary` (mock AWS/GCP rollup from ledger) |
 | POST   | `/demo/reset`              | clears live-injected transactions|
+| GET    | `/llm/status`              | `{ available, default_model, node, key_present }` |
+| POST   | `/actions/{id}/draft-email`| Cursor-SDK-drafted `EmailDraft`  |
+| GET    | `/actions/{id}/email`      | latest `EmailDraft` (or 404)     |
+| POST   | `/actions/{id}/email/send` | mock-sends, sets `sent_at`       |
+| GET    | `/communications`          | all drafts + sends so far        |
 
 CORS already allows `localhost:5173`.
 
@@ -147,6 +152,29 @@ CORS already allows `localhost:5173`.
 `description`, `amount`, and `counterparty` are required; `id`, `date`, and `currency` are optional (auto-filled with a `txn_live_<timestamp>` id, today's date, and `GBP`). The new line shows up in the next `GET /transactions` response and the dashboard picks it up on its next fetch.
 
 A CLI driver lives at `scripts/inject_txn.py` with named scenarios (`aws_spike`, `rogue_vendor`, `new_saas`, `ambiguous_dd`, `customer_inflow`, `payroll`, `hmrc_vat`) that print the live classification for the demo. `POST /demo/reset` clears injected transactions so a demo can be replayed cleanly.
+
+### Cursor SDK live enrichment
+
+When `CURSOR_API_KEY` is in the repo `.env` and `services/node_modules/@cursor/sdk` is installed, `POST /transactions` runs the new bank line through `composer-2` via the Cursor SDK in addition to the deterministic ledger. The model returns:
+
+```json
+{
+  "natural_explanation": "...",
+  "concern_level": "low|medium|high",
+  "concern_reason": "...",
+  "agrees_with_rule_engine": true,
+  "suggested_followup": "...",
+  "_meta": { "model": "composer-2", "elapsed_ms": 5300 }
+}
+```
+
+This is attached to the response (and persisted on the injected raw record so subsequent `GET /transactions` calls return it). Pass `"skip_agent": true` in the POST body to bypass the LLM hop. If the SDK is unavailable for any reason — missing key, Node not installed, network error — the endpoint just omits `agent_insight` and returns the rule-based result; the demo never breaks.
+
+### Email drafts (Cursor SDK)
+
+Some action plans carry an `email_target` (`{name, email, role}`) and `email_purpose`. For those, `POST /actions/{id}/draft-email` asks `composer-2` to write a tone-appropriate `{subject, body, call_to_action}`, stores it in memory, and returns the draft. `POST /actions/{id}/email/send` mock-sends — flips `sent_at`, sets `mock_send: true`, and logs to backend stdout. `GET /communications` lists all drafts/sends.
+
+Today wired actions: `act_chase_globex` (external chase, professional tone) and `act_block_suspicious` (internal alert, calm/factual tone). Adding more is just `email_target` + `email_purpose` on the action.
 
 ### CashflowSummary
 

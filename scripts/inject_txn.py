@@ -174,9 +174,48 @@ def render_classification(t: dict) -> None:
         if enrichment.get("waste_flag"):
             print(f"     {color('WASTE', 'yellow')}      {enrichment['waste_flag']}")
     print(bar)
+    render_agent_insight(t.get("agent_insight"))
 
 
-def cmd_inject(api: str, scenario: dict) -> None:
+def _wrap(text: str, width: int = 72, indent: str = "     ") -> str:
+    import textwrap
+
+    if not text:
+        return ""
+    return "\n".join(
+        textwrap.fill(line, width=width, initial_indent=indent, subsequent_indent=indent)
+        for line in text.splitlines()
+    )
+
+
+def render_agent_insight(insight: dict | None) -> None:
+    if not insight:
+        return
+    meta = insight.get("_meta", {})
+    model = meta.get("model", "?")
+    elapsed = meta.get("elapsed_ms")
+    elapsed_str = f"{elapsed/1000:.1f}s" if isinstance(elapsed, (int, float)) else "?"
+    head = color(f"  Cursor agent  ({model}, {elapsed_str})", "magenta")
+    print(head)
+    nat = insight.get("natural_explanation") or ""
+    if nat:
+        print(_wrap(nat))
+    concern = (insight.get("concern_level") or "").lower()
+    concern_color = {"low": "green", "medium": "yellow", "high": "red"}.get(concern, "reset")
+    if concern:
+        print(
+            f"     concern    {color(concern.upper(), concern_color)}"
+            f"   {insight.get('concern_reason') or ''}"
+        )
+    if insight.get("agrees_with_rule_engine") is False:
+        print(f"     {color('NOTE', 'yellow')}       agent disagrees with the rule engine")
+    nxt = insight.get("suggested_followup") or ""
+    if nxt:
+        print(f"     next step  {nxt}")
+    print(color("─" * 64, "dim"))
+
+
+def cmd_inject(api: str, scenario: dict, *, skip_agent: bool = False) -> None:
     print()
     if "story" in scenario:
         print(f"  {color('story:', 'dim')} {scenario['story']}")
@@ -186,12 +225,23 @@ def cmd_inject(api: str, scenario: dict) -> None:
         f"     amount       {fmt_money(scenario['amount'])}\n"
         f"     counterparty {scenario['counterparty']}"
     )
+    if not skip_agent:
+        print(
+            color(
+                "     (asking the live Cursor agent for a second opinion — ~10s)",
+                "dim",
+            )
+        )
     payload = {
         "description": scenario["description"],
         "amount": scenario["amount"],
         "counterparty": scenario["counterparty"],
     }
-    code, body = _request("POST", f"{api}/transactions", payload)
+    if skip_agent:
+        payload["skip_agent"] = True
+    code, body = _request(
+        "POST", f"{api}/transactions", payload, timeout=45 if not skip_agent else 5.0
+    )
     if code != 201:
         print(color(f"  ! POST failed ({code}): {body}", "red"))
         sys.exit(1)
@@ -271,6 +321,11 @@ def main() -> int:
     ap.add_argument("--description")
     ap.add_argument("--amount", type=float)
     ap.add_argument("--counterparty")
+    ap.add_argument(
+        "--skip-agent",
+        action="store_true",
+        help="skip the live Cursor agent insight (rule-engine only, ~instant)",
+    )
     args = ap.parse_args()
 
     if args.reset:
@@ -292,6 +347,7 @@ def main() -> int:
                 "counterparty": args.counterparty,
                 "story": "custom-injected line",
             },
+            skip_agent=args.skip_agent,
         )
         return 0
 
@@ -299,7 +355,7 @@ def main() -> int:
         list_scenarios()
         return 0
 
-    cmd_inject(args.api, SCENARIOS[args.scenario])
+    cmd_inject(args.api, SCENARIOS[args.scenario], skip_agent=args.skip_agent)
     return 0
 
 
