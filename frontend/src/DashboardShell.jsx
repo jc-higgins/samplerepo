@@ -1,9 +1,16 @@
 import { useEffect, useState } from 'react'
 import { apiBase, getHealth } from './api.js'
+import { CloudCostSnapshot } from './components/CloudCostSnapshot.jsx'
+import { Invoices } from './components/Invoices.jsx'
+import { InvestigationChat } from './components/InvestigationChat.jsx'
+import { Statements } from './components/Statements.jsx'
+import { TransactionDetail } from './components/TransactionDetail.jsx'
 import './DashboardShell.css'
 
 export function DashboardShell({ onBack }) {
   const [health, setHealth] = useState({ status: 'loading' })
+  const [selectedTxnId, setSelectedTxnId] = useState(null)
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState(null)
 
   useEffect(() => {
     let cancelled = false
@@ -89,6 +96,9 @@ export function DashboardShell({ onBack }) {
       >
         <div className="dash-grid">
           <div className="dash-stack dash-stack--left">
+            <section className="dash-panel glass" aria-labelledby="cloud-snap-h">
+              <CloudCostSnapshot onOpenTransaction={setSelectedTxnId} />
+            </section>
             <section
               className="dash-panel glass"
               aria-labelledby="dash-statements"
@@ -96,10 +106,10 @@ export function DashboardShell({ onBack }) {
               <h2 id="dash-statements" className="dash-panel__h">
                 Statements
               </h2>
-              <p className="dash-panel__stub">
-                Category filter + transaction table (next:{' '}
-                <code>Statements.jsx</code>)
-              </p>
+              <Statements
+                selectedId={selectedTxnId}
+                onSelectId={setSelectedTxnId}
+              />
             </section>
             <section
               className="dash-panel glass dash-panel--detail"
@@ -108,10 +118,7 @@ export function DashboardShell({ onBack }) {
               <h2 id="dash-detail" className="dash-panel__h">
                 Transaction detail
               </h2>
-              <p className="dash-panel__stub dash-panel__stub--muted">
-                Drill-down opens here on row click — same page, no router (
-                <code>TransactionDetail.jsx</code>).
-              </p>
+              <TransactionDetail transactionId={selectedTxnId} />
             </section>
           </div>
           <div className="dash-stack dash-stack--right">
@@ -122,9 +129,26 @@ export function DashboardShell({ onBack }) {
               <h2 id="dash-invoices" className="dash-panel__h">
                 Invoices
               </h2>
-              <p className="dash-panel__stub">
-                Verification badges + expand (next: <code>Invoices.jsx</code>)
+              <Invoices
+                selectedInvoiceId={selectedInvoiceId}
+                onSelectInvoice={setSelectedInvoiceId}
+              />
+            </section>
+            <section
+              className="dash-panel glass"
+              aria-labelledby="dash-investigate"
+            >
+              <h2 id="dash-investigate" className="dash-panel__h">
+                Investigate
+              </h2>
+              <p className="dash-panel__lede">
+                Chat uses the selected statement line and invoice as context
+                (demo heuristics).
               </p>
+              <InvestigationChat
+                transactionId={selectedTxnId}
+                invoiceId={selectedInvoiceId}
+              />
             </section>
             <section
               className="dash-panel glass"

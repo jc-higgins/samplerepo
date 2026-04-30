@@ -4,18 +4,18 @@
 
 ## Statements
 
-- [ ] `GET /transactions` on mount (`useEffect` + `useState`).
-- [ ] Columns: date, description, category (badge), amount (outflow visually distinct), confidence, `!` or icon when `review_flag`.
-- [ ] Category filter: `payroll | vendor | software | tax | misc | unknown | all`.
-- [ ] Row click opens detail for that transaction id.
+- [x] `GET /transactions` on mount (`useEffect` + `useState`).
+- [x] Columns: date, description, category (badge), amount (outflow visually distinct), confidence, `!` or icon when `review_flag`.
+- [x] Category filter: `payroll | vendor | software | tax | misc | unknown | all`.
+- [x] Row click opens detail for that transaction id.
 
 ## TransactionDetail
 
-- [ ] Load via `GET /transactions/{id}` or passed row object (spec allows either).
-- [ ] Show counterparty, description, amount, **explanation**, confidence bar.
-- [ ] If `enrichment.line_items`: small table (label, amount, note).
-- [ ] If `enrichment.waste_flag`: **warning banner** with the string.
-- [ ] If `anomaly_reason`: anomaly pill.
+- [x] Load via `GET /transactions/{id}` or passed row object (spec allows either).
+- [x] Show counterparty, description, amount, **explanation**, confidence bar.
+- [x] If `enrichment.line_items`: small table (label, amount, note).
+- [x] If `enrichment.waste_flag`: **warning banner** with the string.
+- [x] If `anomaly_reason`: anomaly pill.
 
 ## Demo note
 
