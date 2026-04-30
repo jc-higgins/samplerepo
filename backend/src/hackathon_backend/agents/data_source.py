@@ -28,6 +28,17 @@ def get_aws_breakdowns() -> dict[str, dict]:
     return _try_fixtures("load_aws_breakdowns", seeds.AWS_BREAKDOWNS)
 
 
+def get_gcp_breakdowns() -> dict[str, dict]:
+    return _try_fixtures("load_gcp_breakdowns", seeds.GCP_BREAKDOWNS)
+
+
+def get_cloud_breakdowns() -> dict[str, dict]:
+    """Merged AWS + GCP line-item enrichments keyed by transaction id."""
+    aws = get_aws_breakdowns()
+    gcp = get_gcp_breakdowns()
+    return {**aws, **gcp}
+
+
 def get_vendors() -> dict[str, dict]:
     return _try_fixtures("load_vendors", seeds.VENDORS)
 

@@ -28,6 +28,23 @@ RAW_TRANSACTIONS: list[dict] = [
         "currency": "GBP",
         "counterparty": "Amazon Web Services",
     },
+    # --- GCP (second cloud cost center) ---
+    {
+        "id": "txn_gcp_apr",
+        "date": "2026-04-18",
+        "description": "GOOGLE CLOUD EMEA LTD",
+        "amount": -1680.33,
+        "currency": "GBP",
+        "counterparty": "Google Cloud",
+    },
+    {
+        "id": "txn_gcp_mar",
+        "date": "2026-03-16",
+        "description": "GOOGLE CLOUD EMEA LTD",
+        "amount": -1522.90,
+        "currency": "GBP",
+        "counterparty": "Google Cloud",
+    },
     # --- Payroll (recurring) ---
     {
         "id": "txn_payroll_apr",
@@ -203,6 +220,32 @@ AWS_BREAKDOWNS: dict[str, dict] = {
             {"label": "EC2 (api-cluster)", "amount": 1980.00},
             {"label": "RDS (prod-db)", "amount": 1740.00},
             {"label": "S3 egress", "amount": 400.40},
+        ],
+        "waste_flag": None,
+    },
+}
+
+# GCP cost-center style breakdowns (same enrichment shape as AWS).
+GCP_BREAKDOWNS: dict[str, dict] = {
+    "txn_gcp_apr": {
+        "source": "gcp",
+        "line_items": [
+            {
+                "label": "GKE (prod)",
+                "amount": 720.00,
+                "note": "regional 3-node pool",
+            },
+            {"label": "BigQuery (analytics)", "amount": 410.50},
+            {"label": "Cloud Storage + egress", "amount": 549.83},
+        ],
+        "waste_flag": "BigQuery on-demand spikes on ad-hoc scans — consider slot reservations.",
+    },
+    "txn_gcp_mar": {
+        "source": "gcp",
+        "line_items": [
+            {"label": "GKE (prod)", "amount": 680.00},
+            {"label": "BigQuery (analytics)", "amount": 355.20},
+            {"label": "Cloud Storage + egress", "amount": 487.70},
         ],
         "waste_flag": None,
     },

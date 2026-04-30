@@ -20,6 +20,12 @@ _RULES: list[tuple[tuple[str, ...], str, float, str]] = [
         "Monthly AWS bill for production infrastructure.",
     ),
     (
+        ("GOOGLE CLOUD", "GCP", "GOOGLE *CLOUD"),
+        "software",
+        0.95,
+        "Monthly Google Cloud bill (GKE, data, storage).",
+    ),
+    (
         ("WISE PAYROLL", "PAYROLL", "DEEL", "GUSTO"),
         "payroll",
         0.96,
@@ -137,7 +143,7 @@ def _build_history(raws: list[dict]) -> dict[str, list[float]]:
 def categorize_all() -> list[dict]:
     raws = list(data_source.get_raw_transactions())
     vendors = data_source.get_vendors()
-    breakdowns = data_source.get_aws_breakdowns()
+    breakdowns = data_source.get_cloud_breakdowns()
     history = _build_history(raws)
 
     results: list[dict] = []
