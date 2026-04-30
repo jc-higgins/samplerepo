@@ -158,6 +158,46 @@ export function TransactionDetail({ transactionId }) {
         </p>
       )}
 
+      {txn.agent_insight && (
+        <section className="detail-section" aria-labelledby="detail-agent">
+          <h3 id="detail-agent" className="detail-section-h">
+            Live agent review
+          </h3>
+          <div className="detail-agent-head">
+            <span
+              className={
+                'detail-agent-pill ' +
+                (txn.agent_insight.concern_level === 'high'
+                  ? 'detail-agent-pill--high'
+                  : txn.agent_insight.concern_level === 'medium'
+                    ? 'detail-agent-pill--med'
+                    : 'detail-agent-pill--low')
+              }
+            >
+              {(txn.agent_insight.concern_level ?? 'info').toUpperCase()}
+            </span>
+            {txn.agent_insight.agrees_with_rule_engine === false && (
+              <span className="detail-agent-disagree">
+                disagrees with rule engine
+              </span>
+            )}
+          </div>
+          <p className="detail-expl">
+            {txn.agent_insight.natural_explanation ?? '—'}
+          </p>
+          {txn.agent_insight.concern_reason && (
+            <p className="detail-agent-reason">
+              {txn.agent_insight.concern_reason}
+            </p>
+          )}
+          {txn.agent_insight.suggested_followup && (
+            <p className="detail-agent-follow">
+              → {txn.agent_insight.suggested_followup}
+            </p>
+          )}
+        </section>
+      )}
+
       {Array.isArray(txn.tags) && txn.tags.length > 0 && (
         <section className="detail-section" aria-labelledby="detail-tags">
           <h3 id="detail-tags" className="detail-section-h">

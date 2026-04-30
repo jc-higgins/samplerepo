@@ -18,13 +18,17 @@ from __future__ import annotations
 import email
 import imaplib
 import json
+import logging
 import os
 import re
+import threading
 from email.header import decode_header
 from email.message import Message
 from typing import Any
 
-from . import data_source
+from . import cursor_llm, data_source, ledger
+
+LOG = logging.getLogger("autocfo.email_inbox")
 
 _USER = os.getenv("AUTOCFO_INBOX_USER", "cursorhack2026@gmail.com")
 _PASS = os.getenv("AUTOCFO_INBOX_PASS", "gyaq qurq kicx hhop")
@@ -107,6 +111,39 @@ def _try_parse_receipt(body: str) -> dict | None:
         except Exception:
             pass
     return None
+
+
+def _kick_off_agent_review(raw: dict) -> str:
+    """Spawn a background thread that runs the Cursor SDK enrichment.
+
+    Returns ``"pending"`` if the SDK looks reachable (frontend should
+    poll ``GET /transactions/{id}`` for ``agent_insight`` to appear),
+    or ``"skipped"`` when the SDK is not available so the popup can
+    immediately stop spinning.
+    """
+    if not cursor_llm.is_available():
+        return "skipped"
+
+    def _worker() -> None:
+        try:
+            classified = ledger.get_transaction(raw["id"])
+            if classified is None:
+                return
+            history = [
+                t
+                for t in ledger.categorize_all()
+                if t["counterparty"] == raw["counterparty"] and t["id"] != raw["id"]
+            ][:5]
+            insight = cursor_llm.enrich_transaction(raw, classified, history)
+            if insight is not None:
+                # Mutate the injected raw in-place so future ledger reads
+                # surface the agent_insight on the same transaction id.
+                raw["agent_insight"] = insight
+        except Exception:
+            LOG.exception("agent review failed for %s", raw.get("id"))
+
+    threading.Thread(target=_worker, daemon=True, name="email-agent-review").start()
+    return "pending"
 
 
 def _receipt_to_raw_transaction(receipt: dict, msg_uid: str) -> dict | None:
@@ -197,12 +234,14 @@ def poll_new() -> dict:
                 body = _extract_body(msg)
                 receipt = _try_parse_receipt(body)
                 injected_id: str | None = None
+                agent_status = "skipped"
                 if receipt:
                     raw = _receipt_to_raw_transaction(receipt, uid.decode())
                     if raw:
                         try:
                             data_source.inject_raw_transaction(raw)
                             injected_id = raw["id"]
+                            agent_status = _kick_off_agent_review(raw)
                         except Exception:
                             injected_id = None
                 out.append(
@@ -214,6 +253,7 @@ def poll_new() -> dict:
                         "body_excerpt": (body or "")[:280],
                         "receipt": receipt,
                         "injected_transaction_id": injected_id,
+                        "agent_review_status": agent_status,
                     }
                 )
             except Exception:
