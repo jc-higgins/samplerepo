@@ -1,0 +1,67 @@
+[
+  {
+    "id": "email_001",
+    "date": "2026-04-04",
+    "from": "billing@acmehosting.com",
+    "from_name": "Acme Hosting Ltd",
+    "subject": "Invoice #AH-2041 \u2014 April Hosting Services",
+    "body": "Please find attached invoice #AH-2041 for \u00a3850.00 covering hosting services for April 2026. Payment terms: 30 days.",
+    "invoice_amount": 850.0,
+    "invoice_ref": "AH-2041",
+    "matched_txn": "txn_003",
+    "verdict": "legitimate",
+    "verdict_reason": "Supplier matches prior bank payments. Invoice amount consistent with monthly hosting plan."
+  },
+  {
+    "id": "email_002",
+    "date": "2026-04-09",
+    "from": "accounts@dataflow.io",
+    "from_name": "DataFlow Solutions",
+    "subject": "Invoice INV-0089 for Data Pipeline Services",
+    "body": "Hi, please see invoice INV-0089 for \u00a32,100.00 for data pipeline services delivered in March\u2013April 2026.",
+    "invoice_amount": 2100.0,
+    "invoice_ref": "INV-0089",
+    "matched_txn": "txn_004",
+    "verdict": "legitimate",
+    "verdict_reason": "Ongoing supplier relationship. Amount matches agreed monthly retainer."
+  },
+  {
+    "id": "email_003",
+    "date": "2026-04-19",
+    "from": "finance@fastnet.net",
+    "from_name": "FastNet Telecoms",
+    "subject": "April Telecoms Invoice \u2014 FastNet",
+    "body": "Invoice for broadband and VoIP services for April 2026. Total due: \u00a3320.00.",
+    "invoice_amount": 320.0,
+    "invoice_ref": "FN-2026-04",
+    "matched_txn": "txn_005",
+    "verdict": "legitimate",
+    "verdict_reason": "Recurring monthly charge. Matches bank payment exactly."
+  },
+  {
+    "id": "email_004",
+    "date": "2026-04-28",
+    "from": "pay@shadybill.biz",
+    "from_name": "ShadyBill Ltd",
+    "subject": "URGENT: Outstanding Invoice \u2014 \u00a33,200.00",
+    "body": "This is a reminder that invoice SB-9921 for \u00a33,200.00 is overdue. Please arrange payment immediately to avoid late fees.",
+    "invoice_amount": 3200.0,
+    "invoice_ref": "SB-9921",
+    "matched_txn": null,
+    "verdict": "suspicious",
+    "verdict_reason": "No prior email contact with this supplier. No matching bank transaction. Domain registered 3 months ago. Do not pay without verification."
+  },
+  {
+    "id": "email_005",
+    "date": "2026-04-02",
+    "from": "no-reply@aws.amazon.com",
+    "from_name": "Amazon Web Services",
+    "subject": "Your AWS Cost & Usage Report \u2014 April 2026",
+    "body": "Your estimated AWS charges for April 2026 are $4,382.17. Log in to Cost Explorer for a full breakdown.",
+    "invoice_amount": 4382.17,
+    "invoice_ref": "AWS-APR-2026",
+    "matched_txn": "txn_001",
+    "verdict": "legitimate",
+    "verdict_reason": "Official AWS billing email. Amount matches bank transaction."
+  }
+]

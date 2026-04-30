@@ -1,0 +1,74 @@
+{
+  "txn_001": {
+    "vendor": "AWS",
+    "billing_currency": "USD",
+    "total_usd": 5519.0,
+    "total_gbp": 4382.17,
+    "fx_rate": 0.794,
+    "period": {
+      "start": "2026-03-01",
+      "end": "2026-03-31"
+    },
+    "services": [
+      {
+        "service": "Amazon EC2",
+        "amount_usd": 2645.0,
+        "amount_gbp": 2100.0,
+        "detail": "API cluster \u2014 40% idle",
+        "waste": true,
+        "idle_cost_gbp": 840.0
+      },
+      {
+        "service": "Amazon RDS",
+        "amount_usd": 2267.0,
+        "amount_gbp": 1800.0,
+        "detail": "Primary Postgres instance",
+        "waste": false,
+        "idle_cost_gbp": 0
+      },
+      {
+        "service": "Amazon S3 Egress",
+        "amount_usd": 607.0,
+        "amount_gbp": 482.17,
+        "detail": "Outbound data transfer costs",
+        "waste": false,
+        "idle_cost_gbp": 0
+      }
+    ],
+    "total_waste_gbp": 840.0,
+    "recommendation": "Downscale EC2 API cluster during off-peak hours. Estimated saving: \u00a3840/month."
+  },
+  "txn_002": {
+    "vendor": "GCP",
+    "total": 1204.5,
+    "period": {
+      "start": "2026-04-15",
+      "end": "2026-04-29"
+    },
+    "services": [
+      {
+        "service": "Compute Engine",
+        "amount": 620.0,
+        "detail": "n2-standard-4 instances",
+        "waste": false,
+        "idle_cost": 0
+      },
+      {
+        "service": "Cloud Storage",
+        "amount": 310.0,
+        "detail": "Regional bucket \u2014 europe-west2",
+        "waste": false,
+        "idle_cost": 0
+      },
+      {
+        "service": "BigQuery",
+        "amount": 274.5,
+        "detail": "On-demand query costs",
+        "waste": true,
+        "idle_cost": 150.0
+      }
+    ],
+    "total_waste": 150.0,
+    "recommendation": "Switch BigQuery to flat-rate pricing. Estimated saving: \u00a3150/month."
+  }
+}

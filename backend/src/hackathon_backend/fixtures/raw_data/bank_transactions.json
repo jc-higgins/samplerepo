@@ -1,0 +1,147 @@
+{
+  "transactions": {
+    "booked": [
+      {
+        "transactionId": "txn_001",
+        "transactionAmount": {
+          "currency": "GBP",
+          "amount": "-4382.17"
+        },
+        "bookingDate": "2026-04-01",
+        "valueDate": "2026-04-01",
+        "creditorName": "Amazon Web Services",
+        "remittanceInformationUnstructured": "AWS charges March 2026",
+        "currencyExchange": {
+          "sourceCurrency": "USD",
+          "targetCurrency": "GBP",
+          "sourceAmount": "5519.00",
+          "exchangeRate": "0.7940",
+          "note": "GBP amount reflects intraday settlement rate"
+        }
+      },
+      {
+        "transactionId": "txn_002",
+        "transactionAmount": {
+          "currency": "GBP",
+          "amount": "-1204.50"
+        },
+        "bookingDate": "2026-04-15",
+        "valueDate": "2026-04-15",
+        "creditorName": "Google Cloud EMEA Ltd",
+        "remittanceInformationUnstructured": "GCP charges March 2026"
+      },
+      {
+        "transactionId": "txn_003",
+        "transactionAmount": {
+          "currency": "GBP",
+          "amount": "-850.00"
+        },
+        "bookingDate": "2026-04-05",
+        "valueDate": "2026-04-05",
+        "creditorName": "Acme Hosting Ltd",
+        "remittanceInformationUnstructured": "Invoice AH-2041"
+      },
+      {
+        "transactionId": "txn_004",
+        "transactionAmount": {
+          "currency": "GBP",
+          "amount": "-2100.00"
+        },
+        "bookingDate": "2026-04-10",
+        "valueDate": "2026-04-10",
+        "creditorName": "DataFlow Solutions",
+        "remittanceInformationUnstructured": "Invoice INV-0089"
+      },
+      {
+        "transactionId": "txn_005",
+        "transactionAmount": {
+          "currency": "GBP",
+          "amount": "-320.00"
+        },
+        "bookingDate": "2026-04-20",
+        "valueDate": "2026-04-20",
+        "creditorName": "FastNet Telecoms",
+        "remittanceInformationUnstructured": "Invoice FN-2026-04"
+      },
+      {
+        "transactionId": "txn_006",
+        "transactionAmount": {
+          "currency": "GBP",
+          "amount": "-145.60"
+        },
+        "bookingDate": "2026-04-25",
+        "valueDate": "2026-04-25",
+        "creditorName": "OfficeSupplies Co",
+        "remittanceInformationUnstructured": "Invoice OS-0412"
+      },
+      {
+        "transactionId": "txn_007",
+        "transactionAmount": {
+          "currency": "GBP",
+          "amount": "12000.00"
+        },
+        "bookingDate": "2026-04-02",
+        "valueDate": "2026-04-02",
+        "debtorName": "Globex Corp",
+        "remittanceInformationUnstructured": "Client payment \u2014 project retainer"
+      },
+      {
+        "transactionId": "txn_008",
+        "transactionAmount": {
+          "currency": "GBP",
+          "amount": "8500.00"
+        },
+        "bookingDate": "2026-04-16",
+        "valueDate": "2026-04-16",
+        "debtorName": "Initech",
+        "remittanceInformationUnstructured": "Client payment \u2014 April milestone"
+      },
+      {
+        "transactionId": "txn_009",
+        "transactionAmount": {
+          "currency": "GBP",
+          "amount": "-42.00"
+        },
+        "bookingDate": "2026-03-31",
+        "valueDate": "2026-03-31",
+        "creditorName": "GitHub Inc",
+        "remittanceInformationUnstructured": "GitHub Teams subscription"
+      },
+      {
+        "transactionId": "txn_010",
+        "transactionAmount": {
+          "currency": "GBP",
+          "amount": "-87.50"
+        },
+        "bookingDate": "2026-03-31",
+        "valueDate": "2026-03-31",
+        "creditorName": "Slack Technologies",
+        "remittanceInformationUnstructured": "Slack Pro subscription"
+      },
+      {
+        "transactionId": "txn_011",
+        "transactionAmount": {
+          "currency": "GBP",
+          "amount": "-16.00"
+        },
+        "bookingDate": "2026-03-31",
+        "valueDate": "2026-03-31",
+        "creditorName": "Notion Labs",
+        "remittanceInformationUnstructured": "Notion Plus subscription"
+      }
+    ],
+    "pending": [
+      {
+        "transactionId": "txn_p01",
+        "transactionAmount": {
+          "currency": "GBP",
+          "amount": "-320.00"
+        },
+        "bookingDate": "2026-04-29",
+        "valueDate": "2026-04-29",
+        "creditorName": "FastNet Telecoms",
+        "remittanceInformationUnstructured": "Reserved PAYMENT FastNet May"
+      }
+    ]
+  }
+}
