@@ -8,7 +8,7 @@ BACKEND_HOST := 127.0.0.1
 BACKEND_PORT ?= 8000
 
 .PHONY: help setup backend frontend demo build health \
-	inject inject-list demo-reset llm-status sdk-setup
+	inject inject-list demo-reset demo-run llm-status sdk-setup
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z0-9_-]+:.*?##' $(MAKEFILE_LIST) | \
@@ -63,5 +63,8 @@ inject: ## Inject a demo bank line (SCENARIO=aws_spike|rogue_vendor|...)
 inject-list: ## Show the last 6 transactions the API knows about
 	@scripts/inject_txn.py --list
 
-demo-reset: ## Clear all live-injected transactions (POST /demo/reset)
-	@scripts/inject_txn.py --reset
+demo-reset: ## Clear injected txns + action approvals + email drafts (POST /demo/reset)
+	@curl -sX POST "http://$(BACKEND_HOST):$(BACKEND_PORT)/demo/reset" | python3 -m json.tool
+
+demo-run: ## Run the full 90s demo walkthrough (requires `make backend` running)
+	@./scripts/demo.sh
