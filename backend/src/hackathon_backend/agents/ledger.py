@@ -171,6 +171,9 @@ def categorize_all() -> list[dict]:
         elif raw.get("enrichment"):
             txn["enrichment"] = raw["enrichment"]
 
+        if raw.get("agent_insight"):
+            txn["agent_insight"] = raw["agent_insight"]
+
         results.append(txn)
 
     results.sort(key=lambda t: t["date"], reverse=True)

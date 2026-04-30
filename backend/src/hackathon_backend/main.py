@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timezone
 
 from fastapi import Body, FastAPI, HTTPException
@@ -6,6 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from hackathon_backend.agents import (
     cashflow_actions,
     cloud_summary,
+    communications,
+    cursor_llm,
     data_source,
     invoice_verifier,
     ledger,
@@ -74,6 +77,18 @@ def create_transaction(payload: dict = Body(...)):
     classified = ledger.get_transaction(txn_id)
     if classified is None:
         raise HTTPException(status_code=500, detail="classification pipeline failed")
+
+    if payload.get("skip_agent") is not True:
+        history = [
+            t
+            for t in ledger.categorize_all()
+            if t["counterparty"] == raw["counterparty"] and t["id"] != txn_id
+        ][:5]
+        insight = cursor_llm.enrich_transaction(raw, classified, history)
+        if insight is not None:
+            raw["agent_insight"] = insight
+            classified["agent_insight"] = insight
+
     return classified
 
 
@@ -140,3 +155,63 @@ def cashflow_summary():
 @app.get("/cloud/cost-summary")
 def cloud_cost_summary():
     return cloud_summary.cost_summary()
+
+
+@app.get("/llm/status")
+def llm_status():
+    return {
+        "available": cursor_llm.is_available(),
+        "default_model": cursor_llm._DEFAULT_MODEL,
+        "node": bool(cursor_llm._NODE_BIN),
+        "key_present": bool(os.environ.get("CURSOR_API_KEY")),
+    }
+
+
+@app.post("/actions/{action_id}/draft-email")
+def draft_action_email(action_id: str, payload: dict = Body(default={})):
+    plan = cashflow_actions.get_action(action_id)
+    if plan is None:
+        raise HTTPException(status_code=404, detail="action not found")
+    if not plan.get("email_target"):
+        raise HTTPException(
+            status_code=400,
+            detail="this action has no outbound email target",
+        )
+    record = communications.draft_for_action(
+        action_id, force=bool(payload.get("force"))
+    )
+    if record is None:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "Cursor SDK unavailable — check CURSOR_API_KEY in .env and "
+                "the services/ Node sidecar"
+            ),
+        )
+    return record
+
+
+@app.get("/actions/{action_id}/email")
+def get_action_email(action_id: str):
+    record = communications.get_action_email(action_id)
+    if record is None:
+        raise HTTPException(status_code=404, detail="no draft for this action")
+    return record
+
+
+@app.post("/actions/{action_id}/email/send")
+def send_action_email(action_id: str, payload: dict = Body(default={})):
+    record = communications.send_action_email(
+        action_id, overrides=payload if isinstance(payload, dict) else None
+    )
+    if record is None:
+        raise HTTPException(
+            status_code=404,
+            detail="no draft to send — POST /actions/{id}/draft-email first",
+        )
+    return record
+
+
+@app.get("/communications")
+def communications_list():
+    return communications.list_communications()

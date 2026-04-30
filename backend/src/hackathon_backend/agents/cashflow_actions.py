@@ -127,6 +127,17 @@ def _seed_actions() -> list[dict]:
             "rationale": (
                 "Standard 14-day chase cadence; counterparty has clean payment history."
             ),
+            "email_target": {
+                "name": "Pat Garcia",
+                "email": "ap@globex.com",
+                "role": "Globex Corp accounts payable",
+            },
+            "email_purpose": (
+                "Politely chase a 14-day overdue invoice INV-1042 for £12,400 from "
+                "Globex Corp. This is the second reminder; the first went on "
+                "2026-04-23. The vendor has paid 6 prior invoices on time and has "
+                "raised no disputes. Tone should be warm but firm."
+            ),
         }
     )
 
@@ -166,6 +177,20 @@ def _seed_actions() -> list[dict]:
                 "rationale": (
                     "Conflicting account details and sender domain mismatch on "
                     f"invoice from {suspicious['vendor']}."
+                ),
+                "email_target": {
+                    "name": "Risk & Finance Ops",
+                    "email": "risk@acme-robotics.local",
+                    "role": "internal alert",
+                },
+                "email_purpose": (
+                    f"Internal alert to the finance ops team. An invoice from "
+                    f"{suspicious['vendor']} for £{abs(float(suspicious['amount'])):,.2f} "
+                    "has been held because (a) the IBAN differs from the one we have "
+                    "paid before, (b) the sender domain has a one-letter typo of the "
+                    "known domain, and (c) the message uses urgency language. Ask "
+                    "the team to verify out-of-band via the vendor's known phone "
+                    "contact before any payment."
                 ),
             }
         )
