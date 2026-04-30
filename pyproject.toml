@@ -1,11 +1,13 @@
 [project]
-name = "hackathon-backend"
+name = "hackathon"
 version = "0.1.0"
 description = "Hackathon API — pivot-friendly stub"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.115.0",
+    "mypy>=1.20.2",
+    "ruff>=0.15.12",
     "uvicorn[standard]>=0.32.0",
 ]
 
@@ -14,4 +16,4 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/hackathon_backend"]
+packages = ["backend/src/hackathon_backend"]
