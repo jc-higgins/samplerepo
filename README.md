@@ -2,6 +2,7 @@
 
 Starter layout for team work at [Cursor × Briefcase: FinTech London Hackathon](https://forum.cursor.com/t/new-event-cursor-x-briefcase-fintech-london-hackathon/158749). Structure is intentionally boring so you can **pivot tracks** (payments, lending, compliance, infra, etc.) without fighting the repo.
 
+
 ## Layout
 
 | Path | Purpose |
