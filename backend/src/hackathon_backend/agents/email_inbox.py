@@ -16,6 +16,7 @@ overridden with ``AUTOCFO_INBOX_USER`` / ``AUTOCFO_INBOX_PASS`` /
 from __future__ import annotations
 
 import email
+import html as _html
 import imaplib
 import json
 import logging
@@ -37,6 +38,15 @@ _HOST = os.getenv("AUTOCFO_INBOX_HOST", "imap.gmail.com")
 _seen_uids: set[bytes] | None = None
 _last_error: str | None = None
 _JSON_BLOCK_RE = re.compile(r"\{[\s\S]*\}")
+_TAG_RE = re.compile(r"<[^>]+>")
+_SMART_QUOTES = {
+    "\u201c": '"',
+    "\u201d": '"',
+    "\u2018": "'",
+    "\u2019": "'",
+    "\u2032": "'",
+    "\u2033": '"',
+}
 
 
 def _connect() -> imaplib.IMAP4_SSL:
@@ -92,24 +102,48 @@ def _extract_body(msg: Message) -> str:
     return ""
 
 
+def _strip_html(s: str) -> str:
+    """Best-effort HTML -> plaintext for body parsing.
+
+    Handles the common Gmail case where a pasted JSON block ends up
+    wrapped in ``<div>``/``<br>`` and quotes get HTML-encoded
+    (``&quot;``) or auto-converted to smart quotes.
+    """
+    if not s:
+        return ""
+    out = _TAG_RE.sub(" ", s)
+    out = _html.unescape(out)
+    for k, v in _SMART_QUOTES.items():
+        out = out.replace(k, v)
+    return out
+
+
 def _try_parse_receipt(body: str) -> dict | None:
     if not body:
         return None
-    candidate = body.strip()
-    try:
-        obj = json.loads(candidate)
-        if isinstance(obj, dict):
-            return obj
-    except Exception:
-        pass
-    match = _JSON_BLOCK_RE.search(candidate)
-    if match:
+    candidates: list[str] = []
+    raw = body.strip()
+    if raw:
+        candidates.append(raw)
+    cleaned = _strip_html(body).strip()
+    if cleaned and cleaned != raw:
+        candidates.append(cleaned)
+
+    for candidate in candidates:
         try:
-            obj = json.loads(match.group(0))
+            obj = json.loads(candidate)
             if isinstance(obj, dict):
                 return obj
         except Exception:
             pass
+        match = _JSON_BLOCK_RE.search(candidate)
+        if match:
+            try:
+                obj = json.loads(match.group(0))
+                if isinstance(obj, dict):
+                    return obj
+            except Exception:
+                pass
     return None
 
 
@@ -244,13 +278,14 @@ def poll_new() -> dict:
                             agent_status = _kick_off_agent_review(raw)
                         except Exception:
                             injected_id = None
+                excerpt = _strip_html(body).strip() or (body or "").strip()
                 out.append(
                     {
                         "id": uid.decode(),
                         "from": _decode(msg.get("from")),
                         "subject": _decode(msg.get("subject")),
                         "date": msg.get("date"),
-                        "body_excerpt": (body or "")[:280],
+                        "body_excerpt": excerpt[:280],
                         "receipt": receipt,
                         "injected_transaction_id": injected_id,
                         "agent_review_status": agent_status,
