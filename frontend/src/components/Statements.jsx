@@ -18,18 +18,45 @@ const money = (n, currency = 'GBP') =>
     minimumFractionDigits: 2,
   }).format(n)
 
-export function Statements({ selectedId, onSelectId, reloadKey = 0 }) {
+const DETAIL_SECTION_ID = 'dash-section-detail'
+
+function scrollToTransactionDetail() {
+  document.getElementById(DETAIL_SECTION_ID)?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start',
+  })
+}
+
+export function Statements({
+  selectedId,
+  onSelectId,
+  reloadKey = 0,
+  accountIds = null,
+  productTag = '',
+}) {
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [category, setCategory] = useState('all')
   const [reload, setReload] = useState(0)
 
+  const scopeKey =
+    (accountIds === null ? '' : accountIds.join(',')) +
+    '|' +
+    (productTag || '')
+
   useEffect(() => {
     let cancelled = false
     setLoading(true)
     setError(null)
-    getTransactions()
+    const txOpts = {}
+    if (accountIds !== null && accountIds.length > 0) {
+      txOpts.accounts = accountIds
+    }
+    if (productTag && String(productTag).trim()) {
+      txOpts.tag = String(productTag).trim()
+    }
+    getTransactions(txOpts)
       .then((data) => {
         if (!cancelled) setRows(Array.isArray(data) ? data : [])
       })
@@ -42,7 +69,7 @@ export function Statements({ selectedId, onSelectId, reloadKey = 0 }) {
     return () => {
       cancelled = true
     }
-  }, [reload, reloadKey])
+  }, [reload, reloadKey, scopeKey])
 
   const filtered = useMemo(() => {
     if (category === 'all') return rows
@@ -59,7 +86,10 @@ export function Statements({ selectedId, onSelectId, reloadKey = 0 }) {
           id="stmt-category"
           className="stmt-select"
           value={category}
-          onChange={(e) => setCategory(e.target.value)}
+          onChange={(e) => {
+            setCategory(e.target.value)
+            scrollToTransactionDetail()
+          }}
         >
           {CATEGORIES.map((c) => (
             <option key={c} value={c}>
@@ -70,7 +100,10 @@ export function Statements({ selectedId, onSelectId, reloadKey = 0 }) {
         <button
           type="button"
           className="stmt-refresh"
-          onClick={() => setReload((n) => n + 1)}
+          onClick={() => {
+            setReload((n) => n + 1)
+            scrollToTransactionDetail()
+          }}
         >
           Refresh
         </button>
@@ -96,6 +129,9 @@ export function Statements({ selectedId, onSelectId, reloadKey = 0 }) {
               <tr>
                 <th scope="col">Date</th>
                 <th scope="col">Description</th>
+                <th scope="col" className="stmt-col-acct">
+                  Account
+                </th>
                 <th scope="col">Category</th>
                 <th scope="col" className="stmt-col-num">
                   Amount
@@ -110,17 +146,21 @@ export function Statements({ selectedId, onSelectId, reloadKey = 0 }) {
               {filtered.map((txn) => {
                 const isSel = txn.id === selectedId
                 const out = txn.amount < 0
+                const selectRow = () => {
+                  onSelectId(txn.id)
+                  scrollToTransactionDetail()
+                }
                 return (
                   <tr
                     key={txn.id}
                     className={
                       'stmt-row' + (isSel ? ' stmt-row--selected' : '')
                     }
-                    onClick={() => onSelectId(txn.id)}
+                    onClick={selectRow}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault()
-                        onSelectId(txn.id)
+                        selectRow()
                       }
                     }}
                     tabIndex={0}
@@ -129,6 +169,11 @@ export function Statements({ selectedId, onSelectId, reloadKey = 0 }) {
                   >
                     <td className="stmt-td stmt-td--date">{txn.date}</td>
                     <td className="stmt-td">{txn.description}</td>
+                    <td className="stmt-td stmt-col-acct">
+                      <span className="stmt-acct" title={txn.account_label}>
+                        {txn.account_label ?? txn.account_id ?? '—'}
+                      </span>
+                    </td>
                     <td className="stmt-td">
                       <span className="stmt-cat">{txn.category}</span>
                     </td>

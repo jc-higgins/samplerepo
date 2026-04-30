@@ -39,9 +39,9 @@ export function TransactionDetail({ transactionId }) {
 
   if (!transactionId) {
     return (
-      <p className="detail-empty">
-        Select a row in Statements to view counterparty, explanation, and line
-        items.
+      <p className="detail-empty" id="detail-breakdown-empty">
+        Select a transaction in the table above to open the breakdown:
+        counterparty, tags, explanation, and line items.
       </p>
     )
   }
@@ -86,6 +86,10 @@ export function TransactionDetail({ transactionId }) {
       )}
 
       <dl className="detail-grid">
+        <dt className="detail-dt">Account</dt>
+        <dd className="detail-dd">
+          {txn.account_label ?? txn.account_id ?? '—'}
+        </dd>
         <dt className="detail-dt">Counterparty</dt>
         <dd className="detail-dd">{txn.counterparty ?? '—'}</dd>
         <dt className="detail-dt">Description</dt>
@@ -100,6 +104,28 @@ export function TransactionDetail({ transactionId }) {
           {money(txn.amount, txn.currency)}
         </dd>
       </dl>
+
+      {txn.specter && (
+        <section className="detail-section" aria-labelledby="detail-specter">
+          <h3 id="detail-specter" className="detail-section-h">
+            Specter
+          </h3>
+          <p className="detail-expl">
+            <strong>{txn.specter.organization_name ?? '—'}</strong>
+            {txn.specter.last_updated && (
+              <span className="detail-specter-meta">
+                {' '}
+                · updated {txn.specter.last_updated}
+              </span>
+            )}
+          </p>
+          {(txn.specter.tagline || txn.specter.description) && (
+            <p className="detail-expl detail-specter-blurb">
+              {txn.specter.tagline || txn.specter.description}
+            </p>
+          )}
+        </section>
+      )}
 
       <section className="detail-section" aria-labelledby="detail-expl">
         <h3 id="detail-expl" className="detail-section-h">
@@ -130,6 +156,25 @@ export function TransactionDetail({ transactionId }) {
           <span className="detail-anomaly-pill">Anomaly</span>
           {txn.anomaly_reason}
         </p>
+      )}
+
+      {Array.isArray(txn.tags) && txn.tags.length > 0 && (
+        <section className="detail-section" aria-labelledby="detail-tags">
+          <h3 id="detail-tags" className="detail-section-h">
+            Tags
+          </h3>
+          <p className="detail-tags-lede">
+            Product / scope labels for this line (not shown in the statement
+            table).
+          </p>
+          <div className="detail-tags">
+            {txn.tags.map((t) => (
+              <span key={t} className="stmt-tag">
+                {t}
+              </span>
+            ))}
+          </div>
+        </section>
       )}
 
       {Array.isArray(items) && items.length > 0 && (

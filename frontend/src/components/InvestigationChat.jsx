@@ -11,13 +11,36 @@ const money = (n, currency = 'GBP') =>
 function buildReply(text, ctx) {
   const q = text.toLowerCase()
   if (!ctx.txn && !ctx.inv) {
-    return 'Select a bank line in Statements and an invoice on the right. I’ll use both to reason about payables (demo rules, no live model).'
+    return 'Select a statement line in Statements. I’ll answer from that row (demo rules, no live model). Optionally pick an invoice to compare payables.'
   }
   if (!ctx.txn) {
-    return 'Add a statement line so we can compare timing and amounts to this invoice.'
+    return 'Select a statement row first — the assistant uses that line as context.'
   }
+
   if (!ctx.inv) {
-    return 'Pick an invoice to compare against this bank movement.'
+    if (q.includes('summary') || q.includes('context') || q.includes('what do you') || q.includes('this line')) {
+      return (
+        `Statement: ${ctx.txn.description} — ${money(ctx.txn.amount, ctx.txn.currency)} on ${ctx.txn.date}. ` +
+        `Category: ${ctx.txn.category ?? 'n/a'}. Counterparty: ${ctx.txn.counterparty ?? 'n/a'}.`
+      )
+    }
+    if (q.includes('unusual') || q.includes('anomaly') || q.includes('strange')) {
+      return (
+        ctx.txn.review_flag
+          ? 'This line is flagged for review in the demo data — check the detail panel for rationale.'
+          : 'No demo flag on this line; still compare to typical monthly pattern for this counterparty.'
+      )
+    }
+    if (q.includes('tax') || q.includes('vat')) {
+      return 'Demo data does not compute VAT splits — use your ledger and the original document for tax treatment.'
+    }
+    if (q.includes('who') || q.includes('vendor') || q.includes('counterparty')) {
+      return `Counterparty on this line: ${ctx.txn.counterparty ?? 'not set'}. Narrative: ${ctx.txn.description}.`
+    }
+    if (q.includes('match') || q.includes('invoice') || q.includes('reconcile')) {
+      return 'Pick an invoice on the right to compare amount, vendor string, and due date against this bank movement.'
+    }
+    return 'Try: summary of this line, who is the counterparty?, is this unusual?, or pick an invoice and ask if they match.'
   }
 
   if (q.includes('summary') || q.includes('context') || q.includes('what do you')) {
@@ -57,26 +80,47 @@ function buildReply(text, ctx) {
     )
   }
 
-  return 'Try: summary, do these match?, risk, or cloud vs invoice — I’ll answer from the selected statement + invoice only.'
+  return 'Try: summary, do these match?, risk, or cloud vs invoice — I’ll use the selected statement and invoice.'
 }
 
-export function InvestigationChat({ transactionId, invoiceId }) {
+export function InvestigationChat({
+  transactionId,
+  invoiceId,
+  hideContextBar = false,
+  className = '',
+}) {
   const [txn, setTxn] = useState(null)
   const [inv, setInv] = useState(null)
   const [messages, setMessages] = useState(() => [
     {
       role: 'assistant',
-      text: 'Investigate payables against the bank feed. Select a statement row and an invoice, then ask questions here.',
+      text: 'Ask about the selected statement line. Add an invoice to compare payables (demo assistant, rule-based).',
     },
   ])
   const [input, setInput] = useState('')
   const endRef = useRef(null)
 
   const suggestions = [
-    'What is the summary?',
-    'Do these match?',
-    'What are the risks?',
-    'Cloud vs invoice?',
+    {
+      label: 'What is the summary?',
+      scrollTo: 'dash-section-detail',
+      gotoLabel: 'Detail',
+    },
+    {
+      label: 'Do these match?',
+      scrollTo: 'dash-section-invoices',
+      gotoLabel: 'Invoices',
+    },
+    {
+      label: 'What are the risks?',
+      scrollTo: 'dash-section-detail',
+      gotoLabel: 'Detail',
+    },
+    {
+      label: 'Cloud vs invoice?',
+      scrollTo: 'dash-section-cloud',
+      gotoLabel: 'Cloud',
+    },
   ]
 
   useEffect(() => {
@@ -132,17 +176,36 @@ export function InvestigationChat({ transactionId, invoiceId }) {
     setMessages((m) => [...m, { role: 'assistant', text: answer }])
   }
 
+  const SCROLL_THEN_SEND_MS = 420
+
+  function runSuggestion(entry) {
+    const label = typeof entry === 'string' ? entry : entry.label
+    const targetId = typeof entry === 'object' ? entry.scrollTo : null
+
+    if (targetId) {
+      document.getElementById(targetId)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      })
+      window.setTimeout(() => send(label), SCROLL_THEN_SEND_MS)
+      return
+    }
+    send(label)
+  }
+
   return (
-    <div className="inv-chat">
-      <div className="inv-chat__ctx">
-        <span className="inv-chat__ctx-bit">
-          Statement:{' '}
-          <strong>{txn ? txn.description : '—'}</strong>
-        </span>
-        <span className="inv-chat__ctx-bit">
-          Invoice: <strong>{inv ? inv.vendor : '—'}</strong>
-        </span>
-      </div>
+    <div className={'inv-chat ' + className}>
+      {!hideContextBar && (
+        <div className="inv-chat__ctx">
+          <span className="inv-chat__ctx-bit">
+            Statement:{' '}
+            <strong>{txn ? txn.description : '—'}</strong>
+          </span>
+          <span className="inv-chat__ctx-bit">
+            Invoice: <strong>{inv ? inv.vendor : '—'}</strong>
+          </span>
+        </div>
+      )}
       <div className="inv-chat__log" role="log" aria-live="polite">
         {messages.map((msg, i) => (
           <div
@@ -162,12 +225,30 @@ export function InvestigationChat({ transactionId, invoiceId }) {
       <div className="inv-chat__suggest" role="group" aria-label="Suggested prompts">
         {suggestions.map((s) => (
           <button
-            key={s}
+            key={s.label}
             type="button"
-            className="inv-chat__chip"
-            onClick={() => send(s)}
+            className={
+              'inv-chat__chip' + (s.scrollTo ? ' inv-chat__chip--goto' : '')
+            }
+            onClick={() => runSuggestion(s)}
+            title={
+              s.scrollTo
+                ? `Jump to ${s.gotoLabel ?? 'section'}, then ask`
+                : undefined
+            }
+            aria-label={
+              s.scrollTo
+                ? `${s.label} — scroll to ${s.gotoLabel ?? 'related panel'}`
+                : s.label
+            }
           >
-            {s}
+            <span className="inv-chat__chip-text">{s.label}</span>
+            {s.scrollTo && s.gotoLabel ? (
+              <span className="inv-chat__chip-anchor" aria-hidden>
+                {s.gotoLabel}
+                <span className="inv-chat__chip-arrow">↓</span>
+              </span>
+            ) : null}
           </button>
         ))}
       </div>
@@ -183,7 +264,11 @@ export function InvestigationChat({ transactionId, invoiceId }) {
           }}
           aria-label="Investigation question"
         />
-        <button type="button" className="inv-chat__send" onClick={() => send()}>
+        <button
+          type="button"
+          className="inv-chat__send"
+          onClick={() => send()}
+        >
           Send
         </button>
       </div>

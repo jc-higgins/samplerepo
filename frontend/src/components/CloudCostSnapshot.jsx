@@ -54,16 +54,35 @@ function TrendSpark({ amounts }) {
   )
 }
 
-export function CloudCostSnapshot({ onOpenTransaction }) {
+export function CloudCostSnapshot({
+  onOpenTransaction,
+  accountIds = null,
+  productTag = '',
+}) {
   const [rows, setRows] = useState([])
   const [costApi, setCostApi] = useState(null)
   const [loading, setLoading] = useState(true)
   const [reload, setReload] = useState(0)
 
+  const scopeKey =
+    (accountIds === null ? '' : accountIds.join(',')) +
+    '|' +
+    (productTag || '')
+
   useEffect(() => {
     let cancelled = false
     setLoading(true)
-    Promise.all([getTransactions(), getCloudCostSummary()])
+    const txOpts = {}
+    if (accountIds !== null && accountIds.length > 0) {
+      txOpts.accounts = accountIds
+    }
+    if (productTag && String(productTag).trim()) {
+      txOpts.tag = String(productTag).trim()
+    }
+    Promise.all([
+      getTransactions(txOpts),
+      getCloudCostSummary(txOpts),
+    ])
       .then(([txns, summary]) => {
         if (!cancelled) {
           setRows(Array.isArray(txns) ? txns : [])
@@ -82,7 +101,7 @@ export function CloudCostSnapshot({ onOpenTransaction }) {
     return () => {
       cancelled = true
     }
-  }, [reload])
+  }, [reload, scopeKey])
 
   const byCloud = useMemo(() => {
     const latest = { aws: null, gcp: null }

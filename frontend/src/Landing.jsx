@@ -9,9 +9,9 @@ const pillars = [
   {
     n: '01',
     title: 'Statements & enrichment',
-    tag: 'Explain every bank line',
+    tag: 'Tagged for drill-down, not spreadsheet archaeology',
     mission:
-      'Categorize transactions, surface plain-English explanations, and drill into optional enrichment — line items for itemizable charges (e.g. AWS) plus waste flags when spend looks inefficient.',
+      'Every line carries the context a CFO needs: categories, counterparties, product tags, and plain-English explanations so you can slice spend by project, chase spikes, and answer “where did this money go?” without opening a dozen vendor consoles. Optional enrichment adds itemized detail (e.g. cloud) and waste callouts when spend looks idle.',
     outputs: [
       'GET /transactions · row → GET /transactions/{id}',
       'explanation · confidence · review_flag · anomaly_reason',
@@ -21,9 +21,9 @@ const pillars = [
   {
     n: '02',
     title: 'Invoices & verification',
-    tag: 'Cross-channel legitimacy',
+    tag: 'Trust, before you pay',
     mission:
-      'Enrich invoice requests with email / WhatsApp context: verification badges (LEGIT · SUSPICIOUS · UNKNOWN), evidence bullets, risk flags, and rationale the CFO can trust.',
+      'Cross-check inbound invoices against email and chat context: LEGIT · SUSPICIOUS · UNKNOWN badges, evidence bullets, and risk flags — so finance can sign off with confidence, not guesswork.',
     outputs: [
       'GET /invoices',
       'verification.decision · evidence · risk_flags',
@@ -33,9 +33,9 @@ const pillars = [
   {
     n: '03',
     title: 'Actions & cashflow',
-    tag: 'Safe execution',
+    tag: 'Runway you can defend',
     mission:
-      'Turn signals into action plans with expected cash impact, human approval when required, and a 90-day projected balance line — no chart libraries, inline SVG only.',
+      'Turn signals into plans with explicit cash impact and human approval when it matters, plus a forward balance view — so you can report to shareholders what you are spending, what you can afford, and what changes next if you act.',
     outputs: [
       'GET /actions · POST /actions/{id}/approve',
       'GET /cashflow/forecast',
@@ -89,12 +89,16 @@ export function Landing() {
       <section className="hero">
         <HeroCanvas />
         <div className="hero__inner">
-          <p className="hero__eyebrow">Invoice enrichment · explained statements</p>
+          <p className="hero__eyebrow">
+            Your CFO copilot — or the clarity your CFO already deserves
+          </p>
           <h1 className="hero__title">AutoCFO</h1>
           <p className="hero__lede">
-            Enrich messy bank lines and inbound invoices: structured explanations,
-            itemized breakdowns when data exists, and verification you can demo in
-            two minutes — then act on cashflow with explicit human gates.
+            One place to see costs end to end, ask where money is going, and drill
+            from totals into projects, vendors, and spikes. Transactions stay richly
+            tagged so you can report up with precision: how much you spend, what
+            drove it, and what you can still afford. You were not hired to be the
+            CTO — leave the console archaeology to the product.
           </p>
           <div className="hero__cta">
             <span className="hero__pill">MVP contract · specs/01-mvp-split.md</span>
@@ -115,17 +119,18 @@ export function Landing() {
             <span className="stat__label">Demo story</span>
             <MiniRunwayCanvas />
             <span className="stat__hint">
-              AWS txn → drill-down with line_items + waste_flag → invoice LEGIT /
-              SUSPICIOUS → approve savings action → forecast line
+              Pick a spike → tagged txn → line items + waste callout → verify
+              invoice → approve a savings action → show the forecast your board
+              can follow
             </span>
           </div>
           <div className="stat glass">
-            <span className="stat__label">Enrichment &amp; explain</span>
+            <span className="stat__label">What the CFO sees</span>
             <ul className="stat__list">
-              <li>Plain-English explanation per transaction</li>
-              <li>Optional enrichment (e.g. cloud line items, notes)</li>
-              <li>Waste callouts when enrichment flags idle spend</li>
-              <li>Invoice evidence + risk_flags + rationale</li>
+              <li>Holistic cash and cost view, then drill-down on demand</li>
+              <li>Tags and categories to slice by project, product, or vendor</li>
+              <li>Plain-English explanations plus optional line-item detail</li>
+              <li>Spike and waste signals you can explain to shareholders</li>
             </ul>
           </div>
           <div className="stat glass">
@@ -140,11 +145,13 @@ export function Landing() {
         </section>
 
         <section className="section">
-          <h2 className="section__title">Three panels, one JSON contract</h2>
+          <h2 className="section__title">From overview to proof, without becoming IT</h2>
           <p className="section__lede">
-            The MVP dashboard consumes Agent B&apos;s API using the shapes in{' '}
-            <code className="inline-code">specs/01-mvp-split.md</code> — no auth,
-            no chart deps; credibility for a short demo beats polish.
+            The demo dashboard wires statements, invoices, and cashflow actions to
+            one contract documented in{' '}
+            <code className="inline-code">specs/01-mvp-split.md</code>, so finance
+            can move from a holistic picture to the exact rows that justify a
+            number — no auth, no chart deps; built to tell a credible story fast.
           </p>
           <div className="cards">
             {pillars.map((a) => (
@@ -174,11 +181,11 @@ export function Landing() {
               Your task (from <code className="inline-code">agent-c-frontend.md</code>)
             </h2>
             <p className="agentc__intro">
-              Replace the single-page shell with the real dashboard when you wire
-              data: header with runway + backend status;{' '}
-              <strong>Statements</strong> with drill-down;{' '}
-              <strong>Invoices</strong> with verification badges;{' '}
-              <strong>Actions &amp; Cashflow</strong> with approve + SVG forecast.
+              The layout mirrors how a CFO works: runway in the header,{' '}
+              <strong>Statements</strong> for tagged drill-down,{' '}
+              <strong>Invoices</strong> for verification,{' '}
+              <strong>Actions &amp; Cashflow</strong> for approve + forecast. Wire
+              Agent B&apos;s data into this shell when you integrate.
             </p>
 
             <div className="agentc__layout" aria-hidden>
@@ -239,13 +246,14 @@ export function Landing() {
             </h2>
             <p className="contract__lede">
               Transactions carry <strong>explanation</strong> and optional{' '}
-              <strong>enrichment</strong> for invoice-style clarity on bank lines;
-              invoices carry <strong>verification</strong>; actions carry{' '}
+              <strong>enrichment</strong> so every line is defensible in a board
+              pack; invoices carry <strong>verification</strong>; actions carry{' '}
               <strong>decision</strong>, <strong>confidence</strong>,{' '}
               <strong>rationale</strong>, <strong>evidence</strong>, and{' '}
               <strong>next_step</strong> —{' '}
               <code>AUTO_EXECUTE</code>, <code>REQUEST_HUMAN</code>, or{' '}
-              <code>REJECT</code>. Weak evidence → human review.
+              <code>REJECT</code>. Weak evidence routes to the humans who sign
+              the checks.
             </p>
             <div className="contract__modes">
               <div>
@@ -299,7 +307,9 @@ export function Landing() {
       </main>
 
       <footer className="foot">
-        <span>AutoCFO · CFO automation · enrichment &amp; explained invoices</span>
+        <span>
+          AutoCFO · holistic costs · tagged drill-down · shareholder-ready answers
+        </span>
       </footer>
     </div>
   )
