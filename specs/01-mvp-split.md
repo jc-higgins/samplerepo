@@ -36,6 +36,9 @@ All three agents must agree on these shapes. If you need to change one, update t
   "amount": -4382.17,
   "currency": "GBP",
   "counterparty": "Amazon Web Services",
+  "account_id": "acc_primary",
+  "account_label": "Primary operating",
+  "tags": ["product:core-api", "infra:cloud"],
   "category": "software",
   "confidence": 0.94,
   "explanation": "Monthly AWS bill for production infrastructure.",
@@ -54,6 +57,8 @@ All three agents must agree on these shapes. If you need to change one, update t
 ```
 
 `amount` is negative for outflows, positive for inflows. `enrichment` is optional (only present for cloud / itemizable charges). `category` ∈ `payroll | vendor | software | tax | misc | unknown`.
+
+`account_id` / `account_label` identify the bank account (multi-account demos). `tags` is a string list (e.g. `product:…`, `infra:…`, `revenue:…`) for product-level filtering; fixtures may omit these and the backend may infer them.
 
 ### InvoiceRequest + Verification (returned together)
 
@@ -117,9 +122,10 @@ All three agents must agree on these shapes. If you need to change one, update t
 | Method | Path                       | Returns                          |
 | ------ | -------------------------- | -------------------------------- |
 | GET    | `/health`                  | `{ ok: true }` (already exists)  |
-| GET    | `/transactions`            | `Transaction[]`                  |
+| GET    | `/transactions`            | `Transaction[]` (optional `?accounts=id1,id2` and/or `?tag=product:…`) |
 | GET    | `/transactions/{id}`       | `Transaction`                    |
 | POST   | `/transactions`            | `Transaction` (live-classified)  |
+| GET    | `/ledger/filters`          | `{ "accounts": AccountInfo[], "tags": string[] }` |
 | GET    | `/invoices`                | `(InvoiceRequest+verification)[]`|
 | GET    | `/invoices/{id}`           | `InvoiceRequest+verification`    |
 | GET    | `/actions`                 | `ActionPlan[]`                   |
@@ -127,7 +133,7 @@ All three agents must agree on these shapes. If you need to change one, update t
 | POST   | `/actions/{id}/approve`    | `ActionPlan` (sets executed=true)|
 | GET    | `/cashflow/forecast`       | `CashflowPoint[]` (90 days)      |
 | GET    | `/cashflow/summary`        | `CashflowSummary` (header data)  |
-| GET    | `/cloud/cost-summary`      | `CloudCostSummary` (mock AWS/GCP rollup from ledger) |
+| GET    | `/cloud/cost-summary`      | `CloudCostSummary` (mock AWS/GCP rollup; optional `accounts` / `tag` query like `/transactions`) |
 | POST   | `/demo/reset`              | clears live-injected transactions|
 | GET    | `/llm/status`              | `{ available, default_model, node, key_present }` |
 | POST   | `/actions/{id}/draft-email`| Cursor-SDK-drafted `EmailDraft`  |
