@@ -23,6 +23,7 @@ export function Statements({ selectedId, onSelectId }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [category, setCategory] = useState('all')
+  const [reload, setReload] = useState(0)
 
   useEffect(() => {
     let cancelled = false
@@ -41,7 +42,7 @@ export function Statements({ selectedId, onSelectId }) {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [reload])
 
   const filtered = useMemo(() => {
     if (category === 'all') return rows
@@ -66,6 +67,13 @@ export function Statements({ selectedId, onSelectId }) {
             </option>
           ))}
         </select>
+        <button
+          type="button"
+          className="stmt-refresh"
+          onClick={() => setReload((n) => n + 1)}
+        >
+          Refresh
+        </button>
       </div>
 
       {loading && (

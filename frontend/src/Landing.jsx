@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { HeroCanvas } from './components/HeroCanvas.jsx'
 import { MiniRunwayCanvas } from './components/MiniRunwayCanvas.jsx'
 import { apiBase } from './api.js'
@@ -47,8 +48,10 @@ const agentCComponents = [
   'Statements.jsx — table, category filter, row → TransactionDetail',
   'TransactionDetail.jsx — explanation bar, line_items table, waste_flag banner, anomaly pill',
   'Invoices.jsx — cards, verification badge, expand evidence / risk / rationale',
+  'CloudCostSnapshot.jsx — AWS/GCP cards, trend + MoM from /cloud/cost-summary',
   'ActionsAndCashflow.jsx — action cards, Approve when HUMAN_APPROVAL',
   'CashflowChart.jsx — inline SVG polyline from projected_balance',
+  'InvestigationChat.jsx — demo heuristics vs selected txn + invoice',
   'api.js — thin fetch helpers (see spec)',
 ]
 
@@ -58,10 +61,12 @@ const agentCApiRows = [
   ['GET', '/invoices', 'Invoice + verification[]'],
   ['GET', '/actions', 'ActionPlan[]'],
   ['GET', '/cashflow/forecast', 'CashflowPoint[]'],
+  ['GET', '/cashflow/summary', 'CashflowSummary'],
+  ['GET', '/cloud/cost-summary', 'CloudCostSummary'],
   ['POST', '/actions/{id}/approve', 'ActionPlan'],
 ]
 
-export function Landing({ onGoDashboard }) {
+export function Landing() {
   const [api, setApi] = useState({ loading: true, ok: null })
 
   useEffect(() => {
@@ -96,15 +101,9 @@ export function Landing({ onGoDashboard }) {
             <span className="hero__pill hero__pill--ghost">
               Agent C · specs/agent-c-frontend.md
             </span>
-            {onGoDashboard && (
-              <button
-                type="button"
-                className="hero__dash-btn"
-                onClick={onGoDashboard}
-              >
-                Open demo dashboard
-              </button>
-            )}
+            <Link to="/dashboard" className="hero__dash-btn">
+              Open demo dashboard
+            </Link>
           </div>
         </div>
         <div className="hero__glow" aria-hidden />

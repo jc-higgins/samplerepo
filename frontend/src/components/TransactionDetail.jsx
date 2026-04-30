@@ -68,6 +68,7 @@ export function TransactionDetail({ transactionId }) {
     typeof txn.confidence === 'number' ? Math.round(txn.confidence * 100) : 0
   const items = txn.enrichment?.line_items
   const waste = txn.enrichment?.waste_flag
+  const src = txn.enrichment?.source
 
   return (
     <div className="detail-body">
@@ -75,6 +76,13 @@ export function TransactionDetail({ transactionId }) {
         <div className="detail-waste" role="status">
           {waste}
         </div>
+      )}
+
+      {src && (
+        <p className="detail-source">
+          <span className="detail-source__pill">{String(src).toUpperCase()}</span>
+          Enriched vendor breakdown
+        </p>
       )}
 
       <dl className="detail-grid">

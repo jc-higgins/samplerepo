@@ -126,6 +126,7 @@ All three agents must agree on these shapes. If you need to change one, update t
 | POST   | `/actions/{id}/approve`    | `ActionPlan` (sets executed=true)|
 | GET    | `/cashflow/forecast`       | `CashflowPoint[]` (90 days)      |
 | GET    | `/cashflow/summary`        | `CashflowSummary` (header data)  |
+| GET    | `/cloud/cost-summary`      | `CloudCostSummary` (mock AWS/GCP rollup from ledger) |
 
 CORS already allows `localhost:5173`.
 
@@ -145,6 +146,10 @@ CORS already allows `localhost:5173`.
 ```
 
 `runway_months` is `null` when `monthly_net >= 0` (cashflow positive). `applied_actions` lists ids of approved actions whose effects are baked into `monthly_outflow` and `forecast`. Approving `act_aws_downscale` lowers `monthly_outflow` by £900 and pushes `runway_months` higher; approving `act_chase_globex` injects a one-time inflow into `/cashflow/forecast` ~14 days out. This is the "approve → forecast updates" demo loop.
+
+### CloudCostSummary
+
+Returned by `GET /cloud/cost-summary`. Built from categorized transactions with `enrichment.source` ∈ `aws | gcp`: per-provider optional object with `latest_transaction_id`, `total_last_period`, `mom_delta_pct`, `history[]` (`period`, `date`, `amount`, `transaction_id`), `services[]` (rolled-up line items), and `waste_flag` when present.
 
 ---
 

@@ -18,7 +18,7 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
 }
 
-.app-switcher button {
+.app-switcher :is(button, a) {
   margin: 0;
   padding: 0.4rem 0.85rem;
   border: none;
@@ -30,16 +30,17 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
+  text-decoration: none;
   transition:
     color 0.15s ease,
     background 0.15s ease;
 }
 
-.app-switcher button:hover {
+.app-switcher :is(button, a):hover {
   color: #f8fafc;
 }
 
-.app-switcher button.is-active {
+.app-switcher :is(button, a).is-active {
   background: rgba(56, 189, 248, 0.2);
   color: #e0f2fe;
 }

@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from hackathon_backend.agents import cashflow_actions, invoice_verifier, ledger
+from hackathon_backend.agents import cashflow_actions, cloud_summary, invoice_verifier, ledger
 
 app = FastAPI(title="AutoCFO API")
 
@@ -80,3 +80,8 @@ def cashflow_forecast(days: int = 90):
 @app.get("/cashflow/summary")
 def cashflow_summary():
     return cashflow_actions.summary()
+
+
+@app.get("/cloud/cost-summary")
+def cloud_cost_summary():
+    return cloud_summary.cost_summary()

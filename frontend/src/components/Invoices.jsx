@@ -20,6 +20,7 @@ export function Invoices({ selectedInvoiceId, onSelectInvoice }) {
   const [error, setError] = useState(null)
   const [expandedId, setExpandedId] = useState(null)
   const [presentId, setPresentId] = useState(null)
+  const [reload, setReload] = useState(0)
 
   useEffect(() => {
     let cancelled = false
@@ -38,12 +39,21 @@ export function Invoices({ selectedInvoiceId, onSelectInvoice }) {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [reload])
 
   const presented = presentId ? list.find((i) => i.id === presentId) : null
 
   return (
     <div className="inv">
+      <div className="inv-toolbar">
+        <button
+          type="button"
+          className="inv-refresh"
+          onClick={() => setReload((n) => n + 1)}
+        >
+          Refresh
+        </button>
+      </div>
       {loading && (
         <p className="inv-msg" role="status">
           Loading…

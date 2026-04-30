@@ -24,6 +24,12 @@ export const getActions = () => fetch(`${apiBase}/actions`).then(jsonOrThrow)
 export const getForecast = () =>
   fetch(`${apiBase}/cashflow/forecast`).then(jsonOrThrow)
 
+export const getCashflowSummary = () =>
+  fetch(`${apiBase}/cashflow/summary`).then(jsonOrThrow)
+
+export const getCloudCostSummary = () =>
+  fetch(`${apiBase}/cloud/cost-summary`).then(jsonOrThrow)
+
 export const approveAction = (id) =>
   fetch(`${apiBase}/actions/${id}/approve`, { method: 'POST' }).then(
     jsonOrThrow

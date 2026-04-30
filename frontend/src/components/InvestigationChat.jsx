@@ -72,6 +72,13 @@ export function InvestigationChat({ transactionId, invoiceId }) {
   const [input, setInput] = useState('')
   const endRef = useRef(null)
 
+  const suggestions = [
+    'What is the summary?',
+    'Do these match?',
+    'What are the risks?',
+    'Cloud vs invoice?',
+  ]
+
   useEffect(() => {
     let cancelled = false
     if (!transactionId) {
@@ -109,17 +116,19 @@ export function InvestigationChat({ transactionId, invoiceId }) {
   }, [invoiceId])
 
   const ctx = useMemo(() => ({ txn, inv }), [txn, inv])
+  const ctxRef = useRef(ctx)
+  ctxRef.current = ctx
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  function send() {
-    const trimmed = input.trim()
+  function send(text) {
+    const trimmed = (text ?? input).trim()
     if (!trimmed) return
     setInput('')
     setMessages((m) => [...m, { role: 'user', text: trimmed }])
-    const answer = buildReply(trimmed, ctx)
+    const answer = buildReply(trimmed, ctxRef.current)
     setMessages((m) => [...m, { role: 'assistant', text: answer }])
   }
 
@@ -150,6 +159,18 @@ export function InvestigationChat({ transactionId, invoiceId }) {
         ))}
         <div ref={endRef} />
       </div>
+      <div className="inv-chat__suggest" role="group" aria-label="Suggested prompts">
+        {suggestions.map((s) => (
+          <button
+            key={s}
+            type="button"
+            className="inv-chat__chip"
+            onClick={() => send(s)}
+          >
+            {s}
+          </button>
+        ))}
+      </div>
       <div className="inv-chat__input-row">
         <input
           className="inv-chat__input"
@@ -162,7 +183,7 @@ export function InvestigationChat({ transactionId, invoiceId }) {
           }}
           aria-label="Investigation question"
         />
-        <button type="button" className="inv-chat__send" onClick={send}>
+        <button type="button" className="inv-chat__send" onClick={() => send()}>
           Send
         </button>
       </div>

@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
-import { apiBase, getHealth } from './api.js'
+import { useCallback, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { apiBase, getCashflowSummary, getHealth } from './api.js'
+import { ActionsAndCashflow } from './components/ActionsAndCashflow.jsx'
 import { CloudCostSnapshot } from './components/CloudCostSnapshot.jsx'
 import { Invoices } from './components/Invoices.jsx'
 import { InvestigationChat } from './components/InvestigationChat.jsx'
@@ -7,10 +9,24 @@ import { Statements } from './components/Statements.jsx'
 import { TransactionDetail } from './components/TransactionDetail.jsx'
 import './DashboardShell.css'
 
-export function DashboardShell({ onBack }) {
+const fmtBalance = (n, currency = 'GBP') =>
+  new Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency,
+    maximumFractionDigits: 0,
+  }).format(n)
+
+export function DashboardShell() {
   const [health, setHealth] = useState({ status: 'loading' })
+  const [summary, setSummary] = useState(null)
   const [selectedTxnId, setSelectedTxnId] = useState(null)
   const [selectedInvoiceId, setSelectedInvoiceId] = useState(null)
+
+  const refreshSummary = useCallback(() => {
+    return getCashflowSummary()
+      .then(setSummary)
+      .catch(() => setSummary(null))
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -26,6 +42,21 @@ export function DashboardShell({ onBack }) {
     }
   }, [])
 
+  useEffect(() => {
+    if (health.status !== 'ok') return
+    let cancelled = false
+    getCashflowSummary()
+      .then((s) => {
+        if (!cancelled) setSummary(s)
+      })
+      .catch(() => {
+        if (!cancelled) setSummary(null)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [health.status])
+
   const backendLabel =
     health.status === 'loading'
       ? '…'
@@ -33,28 +64,61 @@ export function DashboardShell({ onBack }) {
         ? 'ok'
         : 'unreachable'
 
+  const runwayLabel =
+    summary?.runway_months != null
+      ? `runway ~${summary.runway_months} mo`
+      : summary
+        ? 'runway: net positive'
+        : 'runway: …'
+
+  const balanceLabel =
+    summary && typeof summary.current_balance === 'number'
+      ? fmtBalance(summary.current_balance, summary.currency)
+      : null
+
   return (
     <div className="dashboard">
       <header className="dash-header glass">
         <div className="dash-header__row">
-          {onBack && (
-            <button type="button" className="dash-back" onClick={onBack}>
-              ← Overview
-            </button>
-          )}
+          <Link to="/" className="dash-back">
+            ← Overview
+          </Link>
           <h1 className="dash-header__title">
             AutoCFO — Autonomous Financial Intelligence
           </h1>
         </div>
         <div className="dash-header__meta">
-          <span
-            className="dash-meta__item"
-            title="Placeholder until forecast is wired"
-          >
-            runway: ~7.4 mo
+          {balanceLabel && (
+            <span className="dash-pill" title="From /cashflow/summary">
+              <span className="dash-pill__k">Balance</span>
+              <span className="dash-pill__v">{balanceLabel}</span>
+            </span>
+          )}
+          <span className="dash-pill" title="Burn vs inflow model">
+            <span className="dash-pill__k">Runway</span>
+            <span className="dash-pill__v">{runwayLabel}</span>
           </span>
-          <span className="dash-meta__item">
-            backend:{' '}
+          {summary?.applied_actions?.length > 0 && (
+            <span
+              className="dash-pill dash-pill--accent"
+              title={summary.applied_actions.join(', ')}
+            >
+              <span className="dash-pill__k">Actions</span>
+              <span className="dash-pill__v">
+                {summary.applied_actions.length} applied
+              </span>
+            </span>
+          )}
+          <span
+            className={
+              'dash-pill dash-pill--status ' +
+              (health.status === 'ok'
+                ? 'dash-pill--live'
+                : health.status === 'error'
+                  ? 'dash-pill--err'
+                  : '')
+            }
+          >
             <span
               className={
                 'dash-meta__dot ' +
@@ -65,8 +129,9 @@ export function DashboardShell({ onBack }) {
                     : 'dash-meta__dot--err')
               }
               aria-hidden
-            />{' '}
-            {backendLabel}
+            />
+            <span className="dash-pill__k">API</span>
+            <span className="dash-pill__v">{backendLabel}</span>
           </span>
         </div>
       </header>
@@ -157,11 +222,11 @@ export function DashboardShell({ onBack }) {
               <h2 id="dash-actions" className="dash-panel__h">
                 Actions &amp; Cashflow
               </h2>
-              <p className="dash-panel__stub">
-                Action cards, Approve, inline SVG chart (next:{' '}
-                <code>ActionsAndCashflow.jsx</code>,{' '}
-                <code>CashflowChart.jsx</code>)
+              <p className="dash-panel__lede dash-panel__lede--tight">
+                Approve gated plans to shift the forecast; chart uses inline SVG
+                only.
               </p>
+              <ActionsAndCashflow onCashflowChanged={refreshSummary} />
             </section>
           </div>
         </div>
