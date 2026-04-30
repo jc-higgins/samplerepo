@@ -1,0 +1,11 @@
+---
+description: Prefer logical, chunked commits and pushes for this repository
+alwaysApply: true
+---
+
+# Git: logical commits
+
+- **Commit in coherent chunks**, not one mega-diff. Each commit should tell one story (single feature area, one bugfix, one documentation theme, or one mechanical refactor).
+- **Push after meaningful slices** of work so remote history stays close to local progress—unless the user explicitly wants a single squashed commit.
+- When touching multiple areas (e.g. backend + frontend + specs), **split into separate commits** when changes are independent (e.g. `docs: …`, `feat(frontend): …`, `fix(backend): …`).
+- Pair **TODO/** or spec updates** with the code they describe when practical, or commit docs in their own doc-only commit if code is not ready yet.

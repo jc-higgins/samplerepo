@@ -32,17 +32,37 @@ make demo     # FastAPI + Vite in one terminal; Ctrl+C stops both
 
 ## Hackathon MVP & specs
 
-The **~1 hour MVP** is defined in [`specs/01-mvp-split.md`](specs/01-mvp-split.md): shared JSON shapes (transactions with optional **enrichment** such as cloud line items and waste flags, invoices with **verification**, action plans, 90-day cashflow points), a single **API table**, and a **definition of done** (backend serves all endpoints with data; frontend dashboard shows **Statements** with drill-down, **Invoices** with badges, **Actions & cashflow** with approve + SVG forecast). Integrations and “agents” are **mocked / rule-based** for the MVP — no real bank, Gmail, or WhatsApp, and no LLM calls — as spelled out in that spec.
+The **~1 hour MVP** is defined in `[specs/01-mvp-split.md](specs/01-mvp-split.md)`: shared JSON shapes (transactions with optional **enrichment** such as cloud line items and waste flags, invoices with **verification**, action plans, 90-day cashflow points), a single **API table**, and a **definition of done** (backend serves all endpoints with data; frontend dashboard shows **Statements** with drill-down, **Invoices** with badges, **Actions & cashflow** with approve + SVG forecast). Integrations and “agents” are **mocked / rule-based** for the MVP — no real bank, Gmail, or WhatsApp, and no LLM calls — as spelled out in that spec.
 
 Parallel work is split into three briefs (read `01-mvp-split.md` first):
 
-| Agent | Brief | Focus |
-| --- | --- | --- |
-| A | [`specs/agent-a-mock-data.md`](specs/agent-a-mock-data.md) | Synthetic fixtures (bank, AWS-style enrichment, Gmail/WhatsApp, invoices) |
-| B | [`specs/agent-b-backend.md`](specs/agent-b-backend.md) | FastAPI endpoints over fixtures + small rule-based decorators |
-| C | [`specs/agent-c-frontend.md`](specs/agent-c-frontend.md) | Vite + React dashboard consuming the API |
 
-Hackathon narrative, demo story for judges, and “what we are not building” for the wider plan live in [`specs/README.md`](specs/README.md). The **Makefile** targets match the MVP runbook: `uv run uvicorn hackathon_backend.main:app` (Agent B) and `npm run dev` in `frontend/` (Agent C), from the repo root after `uv sync`.
+| Agent | Brief                                                      | Focus                                                                     |
+| ----- | ---------------------------------------------------------- | ------------------------------------------------------------------------- |
+| A     | `[specs/agent-a-mock-data.md](specs/agent-a-mock-data.md)` | Synthetic fixtures (bank, AWS-style enrichment, Gmail/WhatsApp, invoices) |
+| B     | `[specs/agent-b-backend.md](specs/agent-b-backend.md)`     | FastAPI endpoints over fixtures + small rule-based decorators             |
+| C     | `[specs/agent-c-frontend.md](specs/agent-c-frontend.md)`   | Vite + React dashboard consuming the API                                  |
+
+Incremental frontend checklists (numbered to match the Agent C build order) live in `[TODO/Agent-c/](TODO/Agent-c/)`.
+
+Hackathon narrative, demo story for judges, and “what we are not building” for the wider plan live in `[specs/README.md](specs/README.md)`. The **Makefile** targets match the MVP runbook: `uv run uvicorn hackathon_backend.main:app` (Agent B) and `npm run dev` in `frontend/` (Agent C), from the repo root after `uv sync`.
+
+---
+
+## Repository workflow
+
+### Commits and pushes
+
+- Prefer **logical commits**: one coherent story per commit (single feature area, one bugfix, one documentation theme, or one mechanical change).
+- Prefer **several smaller commits** over one huge diff so history stays readable and easy to revert or bisect.
+- **Push** after completing meaningful slices of work so `origin` stays current—not only after a long uninterrupted session.
+- When multiple concerns appear in one session (e.g. backend + frontend + docs), **split into separate commits** when changes can land independently.
+
+Frontend Agent C work can follow the numbered slices in `[TODO/Agent-c/](TODO/Agent-c/)`—each numbered file is a natural commit boundary when implementing the dashboard.
+
+### Automation / Cursor
+
+Commit discipline also applies to AI-assisted work: project guidance lives under `[.cursor/rules/](.cursor/rules/)` (including reminders about chunked commits).
 
 ---
 
@@ -98,7 +118,7 @@ Turn messy transaction streams into structured, explainable financial events.
   - `explanation`
   - `review_flag` (boolean)
   - `anomaly_reason` (nullable)
-  - optional **`enrichment`** (e.g. itemized line items, `waste_flag`) for charges that support a breakdown — shape in [`specs/01-mvp-split.md`](specs/01-mvp-split.md)
+  - optional `**enrichment`** (e.g. itemized line items, `waste_flag`) for charges that support a breakdown — shape in `[specs/01-mvp-split.md](specs/01-mvp-split.md)`
 
 **Escalation Rules**
 
