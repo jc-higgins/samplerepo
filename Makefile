@@ -7,7 +7,8 @@ FRONTEND_DIR := frontend
 BACKEND_HOST := 127.0.0.1
 BACKEND_PORT ?= 8000
 
-.PHONY: help setup backend frontend demo build health
+.PHONY: help setup backend frontend demo build health \
+	inject inject-list demo-reset llm-status sdk-setup
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z0-9_-]+:.*?##' $(MAKEFILE_LIST) | \
@@ -37,3 +38,30 @@ build: ## Production build of the frontend
 
 health: ## GET /health from the API (expects backend running)
 	@curl -sS "http://$(BACKEND_HOST):$(BACKEND_PORT)/health" && echo
+
+llm-status: ## GET /llm/status — is the Cursor SDK wired up?
+	@curl -sS "http://$(BACKEND_HOST):$(BACKEND_PORT)/llm/status" | python3 -m json.tool
+
+sdk-setup: ## npm install @cursor/sdk in services/ (one-off)
+	cd services && npm install
+
+# Demo helpers --------------------------------------------------------------
+# Run the live-injection CLI. `make inject` lists scenarios; pass SCENARIO=...
+# to fire one. Pass SKIP_AGENT=1 to bypass the Cursor SDK hop.
+SCENARIO ?=
+SKIP_AGENT ?=
+
+inject: ## Inject a demo bank line (SCENARIO=aws_spike|rogue_vendor|...)
+	@if [ -z "$(SCENARIO)" ]; then \
+		scripts/inject_txn.py; \
+	elif [ -n "$(SKIP_AGENT)" ]; then \
+		scripts/inject_txn.py $(SCENARIO) --skip-agent; \
+	else \
+		scripts/inject_txn.py $(SCENARIO); \
+	fi
+
+inject-list: ## Show the last 6 transactions the API knows about
+	@scripts/inject_txn.py --list
+
+demo-reset: ## Clear all live-injected transactions (POST /demo/reset)
+	@scripts/inject_txn.py --reset
