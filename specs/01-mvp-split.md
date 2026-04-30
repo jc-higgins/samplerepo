@@ -120,11 +120,31 @@ All three agents must agree on these shapes. If you need to change one, update t
 | GET    | `/transactions`            | `Transaction[]`                  |
 | GET    | `/transactions/{id}`       | `Transaction`                    |
 | GET    | `/invoices`                | `(InvoiceRequest+verification)[]`|
+| GET    | `/invoices/{id}`           | `InvoiceRequest+verification`    |
 | GET    | `/actions`                 | `ActionPlan[]`                   |
-| GET    | `/cashflow/forecast`       | `CashflowPoint[]` (90 days)      |
+| GET    | `/actions/{id}`            | `ActionPlan`                     |
 | POST   | `/actions/{id}/approve`    | `ActionPlan` (sets executed=true)|
+| GET    | `/cashflow/forecast`       | `CashflowPoint[]` (90 days)      |
+| GET    | `/cashflow/summary`        | `CashflowSummary` (header data)  |
 
 CORS already allows `localhost:5173`.
+
+### CashflowSummary
+
+```json
+{
+  "current_balance": 184320.55,
+  "currency": "GBP",
+  "monthly_outflow": 58316.84,
+  "monthly_inflow": 33666.67,
+  "monthly_net": -24650.17,
+  "runway_months": 7.5,
+  "runway_months_if_revenue_stops": 3.2,
+  "applied_actions": ["act_aws_downscale"]
+}
+```
+
+`runway_months` is `null` when `monthly_net >= 0` (cashflow positive). `applied_actions` lists ids of approved actions whose effects are baked into `monthly_outflow` and `forecast`. Approving `act_aws_downscale` lowers `monthly_outflow` by £900 and pushes `runway_months` higher; approving `act_chase_globex` injects a one-time inflow into `/cashflow/forecast` ~14 days out. This is the "approve → forecast updates" demo loop.
 
 ---
 
