@@ -13,6 +13,39 @@ Every action is scored with confidence and tested against realistic financial sc
 
 ---
 
+## Quick start (Makefile)
+
+**Prerequisites:** [uv](https://docs.astral.sh/uv/), Node 18+, npm, `make`, and `bash` (for `make demo`). Optional: `curl` for `make health`.
+
+From the repository root:
+
+```bash
+make setup    # uv sync, npm install in frontend/, copy frontend/.env from .env.example if missing
+make demo     # FastAPI + Vite in one terminal; Ctrl+C stops both
+```
+
+**URLs:** API `http://127.0.0.1:8000` (e.g. `GET /health`) · UI `http://localhost:5173`
+
+**Other targets:** `make help` (list targets), `make backend` / `make frontend` (one server each), `make build` (production frontend build), `make health` (probe `/health` while the API is running). Override the API port with `BACKEND_PORT=8001 make backend`.
+
+---
+
+## Hackathon MVP & specs
+
+The **~1 hour MVP** is defined in [`specs/01-mvp-split.md`](specs/01-mvp-split.md): shared JSON shapes (transactions with optional **enrichment** such as cloud line items and waste flags, invoices with **verification**, action plans, 90-day cashflow points), a single **API table**, and a **definition of done** (backend serves all endpoints with data; frontend dashboard shows **Statements** with drill-down, **Invoices** with badges, **Actions & cashflow** with approve + SVG forecast). Integrations and “agents” are **mocked / rule-based** for the MVP — no real bank, Gmail, or WhatsApp, and no LLM calls — as spelled out in that spec.
+
+Parallel work is split into three briefs (read `01-mvp-split.md` first):
+
+| Agent | Brief | Focus |
+| --- | --- | --- |
+| A | [`specs/agent-a-mock-data.md`](specs/agent-a-mock-data.md) | Synthetic fixtures (bank, AWS-style enrichment, Gmail/WhatsApp, invoices) |
+| B | [`specs/agent-b-backend.md`](specs/agent-b-backend.md) | FastAPI endpoints over fixtures + small rule-based decorators |
+| C | [`specs/agent-c-frontend.md`](specs/agent-c-frontend.md) | Vite + React dashboard consuming the API |
+
+Hackathon narrative, demo story for judges, and “what we are not building” for the wider plan live in [`specs/README.md`](specs/README.md). The **Makefile** targets match the MVP runbook: `uv run uvicorn hackathon_backend.main:app` (Agent B) and `npm run dev` in `frontend/` (Agent C), from the repo root after `uv sync`.
+
+---
+
 ## Product Vision
 
 This project targets the **Financial Intelligence** track:
@@ -45,25 +78,30 @@ This README is intentionally split into **3 parts** so each agent can pick up a 
 Turn messy transaction streams into structured, explainable financial events.
 
 **Inputs**
+
 - Bank transactions
 - Existing chart-of-accounts/tags
 - Historical labeled examples
 
 **Responsibilities**
+
 - Categorize transactions (`payroll`, `vendor`, `software`, `tax`, `misc`).
 - Explain each bank line in plain English ("what this charge is for").
 - Detect low-confidence classifications and emit `REVIEW_REQUIRED`.
 - Surface anomalies (new merchant, amount spikes, unusual cadence).
 
 **Outputs**
+
 - `transaction_classification` record:
   - `category`
   - `confidence` (0.00-1.00)
   - `explanation`
   - `review_flag` (boolean)
   - `anomaly_reason` (nullable)
+  - optional **`enrichment`** (e.g. itemized line items, `waste_flag`) for charges that support a breakdown — shape in [`specs/01-mvp-split.md`](specs/01-mvp-split.md)
 
 **Escalation Rules**
+
 - Confidence < `0.80` -> always escalate.
 - Unknown merchant + high amount -> escalate.
 - Contradictory historical pattern -> escalate.
@@ -76,18 +114,21 @@ Turn messy transaction streams into structured, explainable financial events.
 Confirm whether invoice/payment requests are legitimate by cross-checking communications and financial records.
 
 **Inputs**
+
 - Incoming invoice requests (email/WhatsApp)
 - Gmail threads and metadata
 - WhatsApp message context
 - Bank history and vendor history
 
 **Responsibilities**
+
 - Match invoice requests to known vendors/conversations.
 - Validate amount, due date, account details, and request context.
 - Detect fraud indicators (urgent tone shift, new bank details, spoof patterns).
 - Produce a legitimacy decision with evidence traces.
 
 **Outputs**
+
 - `invoice_verification` record:
   - `decision` (`LEGIT`, `SUSPICIOUS`, `UNKNOWN`)
   - `confidence` (0.00-1.00)
@@ -96,6 +137,7 @@ Confirm whether invoice/payment requests are legitimate by cross-checking commun
   - `requires_human_review` (boolean)
 
 **Escalation Rules**
+
 - Conflicting identity/payment details -> escalate.
 - First-time sender + payment urgency -> escalate.
 - Confidence < `0.85` -> escalate.
@@ -108,11 +150,13 @@ Confirm whether invoice/payment requests are legitimate by cross-checking commun
 Take operational finance actions that protect runway while respecting trust boundaries.
 
 **Inputs**
+
 - Cashflow forecast + runway model
 - Outputs from Part 1 and Part 2
 - Policy constraints (approval thresholds, blocked counterparties, limits)
 
 **Responsibilities**
+
 - Predict short-term cash pressure and recommend interventions.
 - Trigger actions:
   - Chase overdue invoices
@@ -122,6 +166,7 @@ Take operational finance actions that protect runway while respecting trust boun
 - Request human approval when risk, uncertainty, or impact is high.
 
 **Outputs**
+
 - `action_plan` record:
   - `recommended_action`
   - `expected_cash_impact`
@@ -130,6 +175,7 @@ Take operational finance actions that protect runway while respecting trust boun
   - `rationale`
 
 **Escalation Rules**
+
 - Any high-impact action above threshold -> human approval.
 - Depends on upstream item marked `REVIEW_REQUIRED` -> human approval.
 - Confidence < `0.90` -> human approval.
@@ -169,3 +215,4 @@ When in doubt, escalate.
 - Detects fraud and asks for review when confidence is mixed.
 - Explains bank lines in plain language and escalates weird cases.
 - Adds actionability (autonomous CFO behavior) with explicit trust controls.
+
