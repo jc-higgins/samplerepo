@@ -1,0 +1,13 @@
+{
+  "name": "autocfo-cursor-sidecar",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Tiny Node sidecar that wraps @cursor/sdk so the Python backend can call Cursor agents over a subprocess pipe.",
+  "scripts": {
+    "smoke": "echo '{\"system\":\"Reply with strict JSON only.\",\"user\":\"Return {\\\"ok\\\": true}.\"}' | node cursor_invoke.mjs"
+  },
+  "dependencies": {
+    "@cursor/sdk": "*"
+  }
+}
