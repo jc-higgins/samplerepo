@@ -119,6 +119,7 @@ All three agents must agree on these shapes. If you need to change one, update t
 | GET    | `/health`                  | `{ ok: true }` (already exists)  |
 | GET    | `/transactions`            | `Transaction[]`                  |
 | GET    | `/transactions/{id}`       | `Transaction`                    |
+| POST   | `/transactions`            | `Transaction` (live-classified)  |
 | GET    | `/invoices`                | `(InvoiceRequest+verification)[]`|
 | GET    | `/invoices/{id}`           | `InvoiceRequest+verification`    |
 | GET    | `/actions`                 | `ActionPlan[]`                   |
@@ -127,8 +128,25 @@ All three agents must agree on these shapes. If you need to change one, update t
 | GET    | `/cashflow/forecast`       | `CashflowPoint[]` (90 days)      |
 | GET    | `/cashflow/summary`        | `CashflowSummary` (header data)  |
 | GET    | `/cloud/cost-summary`      | `CloudCostSummary` (mock AWS/GCP rollup from ledger) |
+| POST   | `/demo/reset`              | clears live-injected transactions|
 
 CORS already allows `localhost:5173`.
+
+### Live transaction injection (demo)
+
+`POST /transactions` accepts a partial bank line and returns the fully-classified `Transaction` after running it through the same ledger pipeline used for historical data:
+
+```json
+{
+  "description": "AMAZON WEB SERVICES EMEA INVOICE",
+  "amount": -10247.00,
+  "counterparty": "Amazon Web Services"
+}
+```
+
+`description`, `amount`, and `counterparty` are required; `id`, `date`, and `currency` are optional (auto-filled with a `txn_live_<timestamp>` id, today's date, and `GBP`). The new line shows up in the next `GET /transactions` response and the dashboard picks it up on its next fetch.
+
+A CLI driver lives at `scripts/inject_txn.py` with named scenarios (`aws_spike`, `rogue_vendor`, `new_saas`, `ambiguous_dd`, `customer_inflow`, `payroll`, `hmrc_vat`) that print the live classification for the demo. `POST /demo/reset` clears injected transactions so a demo can be replayed cleanly.
 
 ### CashflowSummary
 
