@@ -74,6 +74,14 @@ _DEFAULT_TIMEOUT_MS = int(os.environ.get("CURSOR_TIMEOUT_MS", "25000"))
 _HARD_PYTHON_TIMEOUT = 35.0  # subprocess wall clock
 
 
+def default_model() -> str:
+    return _DEFAULT_MODEL
+
+
+def node_available() -> bool:
+    return bool(_NODE_BIN)
+
+
 def is_available() -> bool:
     return bool(
         _NODE_BIN
@@ -81,6 +89,17 @@ def is_available() -> bool:
         and (_SERVICES_DIR / "node_modules" / "@cursor" / "sdk").exists()
         and os.environ.get("CURSOR_API_KEY")
     )
+
+
+def status() -> dict:
+    """Structured snapshot for /llm/status — never raises."""
+    return {
+        "available": is_available(),
+        "default_model": _DEFAULT_MODEL,
+        "node": bool(_NODE_BIN),
+        "key_present": bool(os.environ.get("CURSOR_API_KEY")),
+        "sidecar": str(_NODE_SCRIPT) if _NODE_SCRIPT.is_file() else None,
+    }
 
 
 def call_cursor(

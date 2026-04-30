@@ -1,4 +1,3 @@
-import os
 from datetime import datetime, timezone
 
 from fastapi import Body, FastAPI, HTTPException
@@ -94,14 +93,15 @@ def create_transaction(payload: dict = Body(...)):
     }
 
     data_source.inject_raw_transaction(raw)
-    classified = ledger.get_transaction(txn_id)
+    all_txns = ledger.categorize_all()
+    classified = next((t for t in all_txns if t["id"] == txn_id), None)
     if classified is None:
         raise HTTPException(status_code=500, detail="classification pipeline failed")
 
     if payload.get("skip_agent") is not True:
         history = [
             t
-            for t in ledger.categorize_all()
+            for t in all_txns
             if t["counterparty"] == raw["counterparty"] and t["id"] != txn_id
         ][:5]
         insight = cursor_llm.enrich_transaction(raw, classified, history)
@@ -186,12 +186,7 @@ def cloud_cost_summary(accounts: str | None = None, tag: str | None = None):
 
 @app.get("/llm/status")
 def llm_status():
-    return {
-        "available": cursor_llm.is_available(),
-        "default_model": cursor_llm._DEFAULT_MODEL,
-        "node": bool(cursor_llm._NODE_BIN),
-        "key_present": bool(os.environ.get("CURSOR_API_KEY")),
-    }
+    return cursor_llm.status()
 
 
 @app.post("/actions/{action_id}/draft-email")
