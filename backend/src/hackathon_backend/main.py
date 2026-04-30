@@ -13,6 +13,7 @@ from hackathon_backend.agents import (
     email_inbox,
     invoice_verifier,
     ledger,
+    specter,
 )
 
 app = FastAPI(title="AutoCFO API")
@@ -36,9 +37,27 @@ def health():
     return {"ok": True}
 
 
+def _parse_accounts_param(accounts: str | None) -> list[str] | None:
+    if not accounts or not accounts.strip():
+        return None
+    return [x.strip() for x in accounts.split(",") if x.strip()]
+
+
+@app.get("/ledger/filters")
+def ledger_filters():
+    rows = ledger.categorize_all()
+    return {
+        "accounts": ledger.accounts_catalog(),
+        "tags": ledger.transaction_tags_union(rows),
+    }
+
+
 @app.get("/transactions")
-def transactions():
-    return ledger.categorize_all()
+def transactions(accounts: str | None = None, tag: str | None = None):
+    rows = ledger.categorize_all()
+    ids = _parse_accounts_param(accounts)
+    t = tag.strip() if tag and tag.strip() else None
+    return ledger.filter_transactions(rows, ids, t)
 
 
 @app.post("/transactions", status_code=201)
@@ -105,6 +124,11 @@ def transaction(txn_id: str):
     txn = ledger.get_transaction(txn_id)
     if txn is None:
         raise HTTPException(status_code=404, detail="transaction not found")
+    domain = ledger.specter_domain_for(txn_id)
+    if domain:
+        row = specter.fetch_company(domain)
+        if row:
+            txn = {**txn, "specter": row}
     return txn
 
 
@@ -154,8 +178,10 @@ def cashflow_summary():
 
 
 @app.get("/cloud/cost-summary")
-def cloud_cost_summary():
-    return cloud_summary.cost_summary()
+def cloud_cost_summary(accounts: str | None = None, tag: str | None = None):
+    ids = _parse_accounts_param(accounts)
+    t = tag.strip() if tag and tag.strip() else None
+    return cloud_summary.cost_summary(account_ids=ids, tag=t)
 
 
 @app.get("/llm/status")

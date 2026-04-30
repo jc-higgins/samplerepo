@@ -140,6 +140,90 @@ def _build_history(raws: list[dict]) -> dict[str, list[float]]:
     return hist
 
 
+def _uniq_strs(seq: list[str]) -> list[str]:
+    seen: set[str] = set()
+    out: list[str] = []
+    for x in seq:
+        if x not in seen:
+            seen.add(x)
+            out.append(x)
+    return out
+
+
+def _resolve_account(raw: dict) -> tuple[str, str]:
+    if raw.get("account_id") and raw.get("account_label"):
+        return str(raw["account_id"]), str(raw["account_label"])
+    desc_u = raw["description"].upper()
+    cp = raw["counterparty"]
+    amt = float(raw["amount"])
+    if "PAYROLL" in desc_u or cp == "Wise Payroll":
+        return "acc_payroll", "Payroll ring-fenced"
+    if cp == "Pied Piper" and amt > 0:
+        return "acc_product", "Product dedicated"
+    return "acc_primary", "Primary operating"
+
+
+def _infer_tags(raw: dict) -> list[str]:
+    desc_u = raw["description"].upper()
+    cp = raw["counterparty"]
+    amt = float(raw["amount"])
+    tags: list[str] = []
+    if "PAYROLL" in desc_u or cp == "Wise Payroll":
+        tags.append("infra:payroll")
+    if amt > 0:
+        if cp == "Initech" or "INITECH" in desc_u:
+            tags.extend(["product:core-api", "revenue:enterprise"])
+        elif cp == "Hooli":
+            tags.append("product:mobile-app")
+        elif cp == "Globex Corp" or "GLOBEX CORP" in desc_u:
+            tags.append("product:core-api")
+        elif cp == "Stripe Payouts" or "STRIPE PAYOUT" in desc_u:
+            tags.append("product:core-api")
+        elif cp == "Pied Piper":
+            tags.append("product:experimental")
+    if amt < 0:
+        if cp in ("Amazon Web Services", "Google Cloud"):
+            tags.extend(["product:core-api", "infra:cloud"])
+        elif cp in ("Vercel", "GitHub", "Linear", "Notion", "Figma"):
+            tags.append("product:core-api")
+        elif cp == "HMRC" or "HMRC" in desc_u:
+            tags.append("infra:tax")
+    return tags
+
+
+def accounts_catalog() -> list[dict]:
+    return [
+        {"id": "acc_primary", "label": "Primary operating", "currency": "GBP"},
+        {"id": "acc_payroll", "label": "Payroll ring-fenced", "currency": "GBP"},
+        {"id": "acc_product", "label": "Product dedicated", "currency": "GBP"},
+    ]
+
+
+def filter_transactions(
+    rows: list[dict],
+    account_ids: list[str] | None,
+    tag: str | None,
+) -> list[dict]:
+    out = rows
+    if account_ids:
+        allow = set(account_ids)
+        out = [t for t in out if t.get("account_id") in allow]
+    if tag:
+        out = [t for t in out if tag in (t.get("tags") or [])]
+    return out
+
+
+def transaction_tags_union(rows: list[dict]) -> list[str]:
+    found: set[str] = set()
+    ordered: list[str] = []
+    for t in rows:
+        for x in t.get("tags") or []:
+            if x not in found:
+                found.add(x)
+                ordered.append(x)
+    return sorted(ordered)
+
+
 def categorize_all() -> list[dict]:
     raws = list(data_source.get_raw_transactions())
     vendors = data_source.get_vendors()
@@ -152,6 +236,9 @@ def categorize_all() -> list[dict]:
         anomaly = _detect_anomaly(raw, history, vendors)
         review_flag = meta["review_flag"] or anomaly is not None or meta["confidence"] < 0.80
 
+        aid, alab = _resolve_account(raw)
+        tags = _uniq_strs(list(raw.get("tags") or []) + _infer_tags(raw))
+
         txn = {
             "id": raw["id"],
             "date": raw["date"],
@@ -159,6 +246,9 @@ def categorize_all() -> list[dict]:
             "amount": raw["amount"],
             "currency": raw["currency"],
             "counterparty": raw["counterparty"],
+            "account_id": aid,
+            "account_label": alab,
+            "tags": tags,
             "category": meta["category"],
             "confidence": meta["confidence"],
             "explanation": meta["explanation"],
@@ -184,4 +274,13 @@ def get_transaction(txn_id: str) -> dict | None:
     for t in categorize_all():
         if t["id"] == txn_id:
             return t
+    return None
+
+
+def specter_domain_for(txn_id: str) -> str | None:
+    for raw in data_source.get_raw_transactions():
+        if raw["id"] != txn_id:
+            continue
+        d = raw.get("specter_domain")
+        return d.strip() if isinstance(d, str) and d.strip() else None
     return None

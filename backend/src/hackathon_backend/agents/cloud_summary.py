@@ -5,8 +5,12 @@ from __future__ import annotations
 from . import ledger
 
 
-def cost_summary() -> dict:
+def cost_summary(
+    account_ids: list[str] | None = None,
+    tag: str | None = None,
+) -> dict:
     txns = ledger.categorize_all()
+    txns = ledger.filter_transactions(txns, account_ids, tag)
     currency = "GBP"
     providers: dict = {}
 

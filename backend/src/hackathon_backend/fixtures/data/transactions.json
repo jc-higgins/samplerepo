@@ -171,7 +171,8 @@
     "explanation": "Vercel Pro team plan monthly subscription.",
     "review_flag": false,
     "anomaly_reason": null,
-    "account_id": "acc_gbp_main"
+    "account_id": "acc_gbp_main",
+    "specter_domain": "vercel.com"
   },
   {
     "id": "txn_linear",

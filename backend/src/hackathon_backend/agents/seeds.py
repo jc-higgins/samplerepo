@@ -70,6 +70,7 @@ RAW_TRANSACTIONS: list[dict] = [
         "amount": -240.00,
         "currency": "GBP",
         "counterparty": "Vercel",
+        "specter_domain": "vercel.com",
     },
     {
         "id": "txn_linear",
