@@ -4,6 +4,7 @@ import { apiBase, getCashflowSummary, getHealth, getLedgerFilters } from './api.
 import { AccountProductScope } from './components/AccountProductScope.jsx'
 import { ActionsAndCashflow } from './components/ActionsAndCashflow.jsx'
 import { CloudCostSnapshot } from './components/CloudCostSnapshot.jsx'
+import { CollapsiblePanel } from './components/CollapsiblePanel.jsx'
 import { EmailNotifier } from './components/EmailNotifier.jsx'
 import { Invoices } from './components/Invoices.jsx'
 import { FloatingStatementChat } from './components/FloatingStatementChat.jsx'
@@ -34,6 +35,18 @@ export function DashboardShell() {
   const [scopeAccountIds, setScopeAccountIds] = useState(null)
   const [scopeTag, setScopeTag] = useState('')
   const [filtersMeta, setFiltersMeta] = useState({ accounts: [], tags: [] })
+  const [panelOpen, setPanelOpen] = useState({
+    scope: true,
+    cloud: true,
+    statements: true,
+    detail: true,
+    invoices: true,
+    assistant: true,
+    actions: true,
+  })
+
+  const togglePanel = (key) =>
+    setPanelOpen((p) => ({ ...p, [key]: !p[key] }))
 
   const refreshSummary = useCallback(() => {
     return getCashflowSummary()
@@ -224,14 +237,14 @@ export function DashboardShell() {
           aria-busy={health.status === 'loading'}
         >
           {health.status === 'ok' && filtersMeta.accounts.length > 0 && (
-            <section
+            <CollapsiblePanel
               id="dash-section-scope"
-              className="dash-panel dash-scope-block dash-scroll-target"
-              aria-labelledby="dash-scope-title"
+              titleId="dash-scope-title"
+              title="Scope"
+              open={panelOpen.scope}
+              onToggle={() => togglePanel('scope')}
+              className="dash-scope-block"
             >
-              <h2 id="dash-scope-title" className="dash-panel__h">
-                Scope
-              </h2>
               <p className="dash-panel__lede dash-panel__lede--tight">
                 Default is all accounts and tags. Narrow to specific accounts
                 and/or a product tag (demo tags come from counterparties).
@@ -244,17 +257,20 @@ export function DashboardShell() {
                 onAccountIdsChange={setScopeAccountIds}
                 onTagChange={setScopeTag}
               />
-            </section>
+            </CollapsiblePanel>
           )}
 
           <div className="dash-split">
             <div className="dash-col dash-col--primary">
-              <section
+              <CollapsiblePanel
                 id="dash-section-cloud"
-                className="dash-panel dash-scroll-target"
-                aria-labelledby="cloud-snap-h"
+                titleId="cloud-snap-h"
+                title="Cloud cost centers"
+                open={panelOpen.cloud}
+                onToggle={() => togglePanel('cloud')}
               >
                 <CloudCostSnapshot
+                  embedded
                   onOpenTransaction={(id) => {
                     setSelectedTxnId(id)
                     scrollToTransactionDetailPanel()
@@ -262,15 +278,14 @@ export function DashboardShell() {
                   accountIds={scopeAccountIds}
                   productTag={scopeTag}
                 />
-              </section>
-              <section
+              </CollapsiblePanel>
+              <CollapsiblePanel
                 id="dash-section-statements"
-                className="dash-panel dash-scroll-target"
-                aria-labelledby="dash-statements"
+                titleId="dash-statements"
+                title="Statements"
+                open={panelOpen.statements}
+                onToggle={() => togglePanel('statements')}
               >
-                <h2 id="dash-statements" className="dash-panel__h">
-                  Statements
-                </h2>
                 <Statements
                   selectedId={selectedTxnId}
                   onSelectId={setSelectedTxnId}
@@ -278,60 +293,59 @@ export function DashboardShell() {
                   accountIds={scopeAccountIds}
                   productTag={scopeTag}
                 />
-              </section>
-              <section
+              </CollapsiblePanel>
+              <CollapsiblePanel
                 id="dash-section-detail"
-                className="dash-panel dash-panel--detail dash-scroll-target"
-                aria-labelledby="dash-detail"
+                titleId="dash-detail"
+                title="Transaction detail"
+                open={panelOpen.detail}
+                onToggle={() => togglePanel('detail')}
+                className="dash-panel--detail"
               >
-                <h2 id="dash-detail" className="dash-panel__h">
-                  Transaction detail
-                </h2>
                 <TransactionDetail transactionId={selectedTxnId} />
-              </section>
+              </CollapsiblePanel>
             </div>
 
             <aside className="dash-col dash-col--side">
-              <section
+              <CollapsiblePanel
                 id="dash-section-invoices"
-                className="dash-panel dash-scroll-target"
-                aria-labelledby="dash-invoices"
+                titleId="dash-invoices"
+                title="Invoices"
+                open={panelOpen.invoices}
+                onToggle={() => togglePanel('invoices')}
               >
-                <h2 id="dash-invoices" className="dash-panel__h">
-                  Invoices
-                </h2>
                 <Invoices
                   selectedInvoiceId={selectedInvoiceId}
                   onSelectInvoice={setSelectedInvoiceId}
                 />
-              </section>
-              <section
-                className="dash-panel dash-panel--hint"
-                aria-labelledby="dash-investigate"
+              </CollapsiblePanel>
+              <CollapsiblePanel
+                id="dash-section-assistant-hint"
+                titleId="dash-investigate"
+                title="Statement assistant"
+                open={panelOpen.assistant}
+                onToggle={() => togglePanel('assistant')}
+                className="dash-panel--hint"
               >
-                <h2 id="dash-investigate" className="dash-panel__h">
-                  Statement assistant
-                </h2>
                 <p className="dash-panel__lede dash-panel__lede--tight">
                   Use the floating panel (bottom-right). It uses the selected
                   statement row; add an invoice to compare payables (demo
                   rule-based replies).
                 </p>
-              </section>
-              <section
+              </CollapsiblePanel>
+              <CollapsiblePanel
                 id="dash-section-actions"
-                className="dash-panel dash-scroll-target"
-                aria-labelledby="dash-actions"
+                titleId="dash-actions"
+                title="Actions & cashflow"
+                open={panelOpen.actions}
+                onToggle={() => togglePanel('actions')}
               >
-                <h2 id="dash-actions" className="dash-panel__h">
-                  Actions &amp; cashflow
-                </h2>
                 <p className="dash-panel__lede dash-panel__lede--tight">
                   Approve gated plans to shift the forecast. Chart is inline
                   SVG only.
                 </p>
                 <ActionsAndCashflow onCashflowChanged={refreshSummary} />
-              </section>
+              </CollapsiblePanel>
             </aside>
           </div>
         </main>

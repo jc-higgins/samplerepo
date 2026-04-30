@@ -58,6 +58,7 @@ export function CloudCostSnapshot({
   onOpenTransaction,
   accountIds = null,
   productTag = '',
+  embedded = false,
 }) {
   const [rows, setRows] = useState([])
   const [costApi, setCostApi] = useState(null)
@@ -116,10 +117,12 @@ export function CloudCostSnapshot({
 
   if (loading) {
     return (
-      <div className="cloud-snap">
-        <h2 id="cloud-snap-h" className="dash-panel__h">
-          Cloud cost centers
-        </h2>
+      <div className={'cloud-snap' + (embedded ? ' cloud-snap--embedded' : '')}>
+        {!embedded && (
+          <h2 id="cloud-snap-h" className="dash-panel__h">
+            Cloud cost centers
+          </h2>
+        )}
         <p className="cloud-snap__msg">Loading…</p>
       </div>
     )
@@ -128,23 +131,42 @@ export function CloudCostSnapshot({
   const providers = costApi?.providers ?? {}
 
   return (
-    <div className="cloud-snap">
-      <div className="cloud-snap__head">
-        <h2 id="cloud-snap-h" className="dash-panel__h cloud-snap__h">
-          Cloud cost centers
-        </h2>
-        <button
-          type="button"
-          className="cloud-snap__refresh"
-          onClick={() => setReload((n) => n + 1)}
-        >
-          Refresh
-        </button>
-      </div>
-      <p className="cloud-snap__lede">
-        Latest enriched bills on the feed — trend from mock periods in the API.
-        Open a row in Statements for full line items.
-      </p>
+    <div className={'cloud-snap' + (embedded ? ' cloud-snap--embedded' : '')}>
+      {!embedded && (
+        <>
+          <div className="cloud-snap__head">
+            <h2 id="cloud-snap-h" className="dash-panel__h cloud-snap__h">
+              Cloud cost centers
+            </h2>
+            <button
+              type="button"
+              className="cloud-snap__refresh"
+              onClick={() => setReload((n) => n + 1)}
+            >
+              Refresh
+            </button>
+          </div>
+          <p className="cloud-snap__lede">
+            Latest enriched bills on the feed — trend from mock periods in the
+            API. Open a row in Statements for full line items.
+          </p>
+        </>
+      )}
+      {embedded && (
+        <div className="cloud-snap__toolbar">
+          <p className="cloud-snap__lede cloud-snap__lede--toolbar">
+            Latest enriched bills on the feed — trend from mock periods in the
+            API. Open a row in Statements for full line items.
+          </p>
+          <button
+            type="button"
+            className="cloud-snap__refresh"
+            onClick={() => setReload((n) => n + 1)}
+          >
+            Refresh
+          </button>
+        </div>
+      )}
       <div className="cloud-snap__grid">
         {['aws', 'gcp'].map((key) => {
           const txn = byCloud[key]
