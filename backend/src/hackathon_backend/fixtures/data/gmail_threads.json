@@ -1,0 +1,61 @@
+{
+  "thr_acme_legit": {
+    "id": "thr_acme_legit",
+    "participants": ["billing@acme-hosting.co.uk", "ops@autocfo.example"],
+    "message_count": 12,
+    "first_message_at": "2025-08-15T10:02:00Z",
+    "last_message_at": "2026-04-22T09:14:00Z",
+    "snippets": [
+      "Welcome to Acme Hosting \u2014 here are the onboarding details for your account.",
+      "March invoice attached, same details as before.",
+      "Confirming the call on Tues, will send the April invoice afterwards.",
+      "Following our call last week, please find April invoice attached."
+    ]
+  },
+  "thr_acme_susp": {
+    "id": "thr_acme_susp",
+    "participants": ["ar@acmehosting-finance.com", "ops@autocfo.example"],
+    "message_count": 2,
+    "first_message_at": "2026-04-26T08:50:00Z",
+    "last_message_at": "2026-04-28T15:42:00Z",
+    "snippets": [
+      "Hi \u2014 we have moved bank, please update your records and remit to the new IBAN.",
+      "URGENT: please pay ASAP. New bank details attached. Need this settled today."
+    ]
+  },
+  "thr_dataflow": {
+    "id": "thr_dataflow",
+    "participants": ["accounts@dataflow.io", "ops@autocfo.example"],
+    "message_count": 8,
+    "first_message_at": "2025-09-12T11:00:00Z",
+    "last_message_at": "2026-04-10T16:20:00Z",
+    "snippets": [
+      "Pipeline retainer agreed at \u00a32,100/mo for the next 12 months.",
+      "March invoice INV-0089 attached.",
+      "Thanks for the prompt payment \u2014 April invoice will follow next week."
+    ]
+  },
+  "thr_fastnet": {
+    "id": "thr_fastnet",
+    "participants": ["finance@fastnet.net", "ops@autocfo.example"],
+    "message_count": 14,
+    "first_message_at": "2025-06-03T09:11:00Z",
+    "last_message_at": "2026-04-19T08:40:00Z",
+    "snippets": [
+      "Welcome to FastNet \u2014 broadband + VoIP active from June 1.",
+      "Monthly invoice attached, no changes to plan.",
+      "Service uptime report for Q1 2026 enclosed."
+    ]
+  },
+  "thr_office": {
+    "id": "thr_office",
+    "participants": ["invoices@officesupplies.co", "ops@autocfo.example"],
+    "message_count": 6,
+    "first_message_at": "2025-11-05T14:00:00Z",
+    "last_message_at": "2026-04-25T10:18:00Z",
+    "snippets": [
+      "Order confirmation \u2014 stationery + monitor stand.",
+      "Receipt for April delivery."
+    ]
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "thr_riley_wa": {
+    "id": "thr_riley_wa",
+    "participants": ["+447700900123 (Riley Designs)", "+447700900999 (founder)"],
+    "message_count": 24,
+    "first_message_at": "2025-11-01T18:22:00Z",
+    "last_message_at": "2026-04-22T17:30:00Z",
+    "snippets": [
+      "Hey! Sending the brand work invoice through, ping me when paid.",
+      "Bank details same as last time.",
+      "Cheers \u2014 received, see you Friday."
+    ]
+  },
+  "thr_globex_wa": {
+    "id": "thr_globex_wa",
+    "participants": ["+447700900111 (Globex Corp)", "+447700900999 (founder)"],
+    "message_count": 14,
+    "first_message_at": "2025-12-02T17:31:00Z",
+    "last_message_at": "2026-04-02T08:11:00Z",
+    "snippets": [
+      "Sending the April retainer Monday \u2014 same account?",
+      "All good, thanks!",
+      "Quick heads up: project scope expanding next month, let's chat Tue."
+    ]
+  },
+  "thr_jane_freelance_wa": {
+    "id": "thr_jane_freelance_wa",
+    "participants": ["+447700900456 (Jane Patel)", "+447700900999 (founder)"],
+    "message_count": 9,
+    "first_message_at": "2026-02-12T10:05:00Z",
+    "last_message_at": "2026-04-18T19:51:00Z",
+    "snippets": [
+      "Wrapping up the integration work this week.",
+      "Will send invoice on Friday.",
+      "Thanks \u2014 received, talk soon."
+    ]
+  }
+}

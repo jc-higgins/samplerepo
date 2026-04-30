@@ -1,0 +1,20 @@
+{
+  "txn_aws_apr": {
+    "source": "aws",
+    "line_items": [
+      { "label": "EC2 (api-cluster)", "amount": 2100.00, "note": "40% idle over last 14 days" },
+      { "label": "RDS (prod-db)",     "amount": 1800.00, "note": "Primary Postgres instance" },
+      { "label": "S3 egress",         "amount":  482.17, "note": "Outbound data transfer" }
+    ],
+    "waste_flag": "~\u00a3900/mo idle compute on api-cluster"
+  },
+  "txn_aws_mar": {
+    "source": "aws",
+    "line_items": [
+      { "label": "EC2 (api-cluster)", "amount": 1980.00, "note": "Steady utilization" },
+      { "label": "RDS (prod-db)",     "amount": 1740.00, "note": "Primary Postgres instance" },
+      { "label": "S3 egress",         "amount":  400.40, "note": "Outbound data transfer" }
+    ],
+    "waste_flag": null
+  }
+}

@@ -1,0 +1,54 @@
+[
+  {
+    "id": "inv_acme_apr",
+    "received_at": "2026-04-22T09:14:00Z",
+    "channel": "email",
+    "sender": "billing@acme-hosting.co.uk",
+    "vendor": "Acme Hosting Ltd",
+    "amount": 1200.00,
+    "currency": "GBP",
+    "due_date": "2026-05-06",
+    "account_details": "GB29 NWBK 6016 1331 9268 19",
+    "thread_id": "thr_acme_legit",
+    "thread_excerpt": "Following our call last week, please find April invoice attached. Same banking details as last quarter \u2014 let me know if anything looks off."
+  },
+  {
+    "id": "inv_acme_susp",
+    "received_at": "2026-04-28T15:42:00Z",
+    "channel": "email",
+    "sender": "ar@acmehosting-finance.com",
+    "vendor": "Acme Hosting Ltd",
+    "amount": 4500.00,
+    "currency": "GBP",
+    "due_date": "2026-04-30",
+    "account_details": "GB12 NWBK 1234 5678 9000 11",
+    "thread_id": "thr_acme_susp",
+    "thread_excerpt": "URGENT: please pay ASAP. We have updated bank details (new bank), see attached. Need this settled today to avoid service disruption."
+  },
+  {
+    "id": "inv_unknown_quanta",
+    "received_at": "2026-04-26T11:03:00Z",
+    "channel": "email",
+    "sender": "accounts@quanta-services.io",
+    "vendor": "Quanta Services Inc",
+    "amount": 2750.00,
+    "currency": "GBP",
+    "due_date": "2026-05-12",
+    "account_details": "GB54 BARC 2003 0455 7882 19",
+    "thread_id": null,
+    "thread_excerpt": "Invoice attached for consulting services Q1 2026."
+  },
+  {
+    "id": "inv_riley_wa",
+    "received_at": "2026-04-22T17:30:00Z",
+    "channel": "whatsapp",
+    "sender": "+447700900123",
+    "vendor": "Riley Designs",
+    "amount": 480.00,
+    "currency": "GBP",
+    "due_date": "2026-05-05",
+    "account_details": "GB12 HSBC 4001 2710 9911 03",
+    "thread_id": "thr_riley_wa",
+    "thread_excerpt": "Hey! Sending the brand work invoice through, ping me when paid \u2014 same bank details as last month."
+  }
+]

@@ -1,0 +1,219 @@
+[
+  {
+    "id": "txn_aws_apr",
+    "date": "2026-04-21",
+    "description": "AMAZON WEB SERVICES EMEA",
+    "amount": -4382.17,
+    "currency": "GBP",
+    "counterparty": "Amazon Web Services",
+    "enrichment": {
+      "source": "aws",
+      "line_items": [
+        { "label": "EC2 (api-cluster)", "amount": 2100.00, "note": "40% idle over last 14 days" },
+        { "label": "RDS (prod-db)",     "amount": 1800.00, "note": "Primary Postgres instance" },
+        { "label": "S3 egress",         "amount":  482.17, "note": "Outbound data transfer" }
+      ],
+      "waste_flag": "~\u00a3900/mo idle compute on api-cluster"
+    }
+  },
+  {
+    "id": "txn_aws_mar",
+    "date": "2026-03-21",
+    "description": "AMAZON WEB SERVICES EMEA",
+    "amount": -4120.40,
+    "currency": "GBP",
+    "counterparty": "Amazon Web Services"
+  },
+  {
+    "id": "txn_payroll_apr",
+    "date": "2026-04-28",
+    "description": "WISE PAYROLL APR2026",
+    "amount": -42500.00,
+    "currency": "GBP",
+    "counterparty": "Wise Payroll"
+  },
+  {
+    "id": "txn_payroll_mar",
+    "date": "2026-03-28",
+    "description": "WISE PAYROLL MAR2026",
+    "amount": -41200.00,
+    "currency": "GBP",
+    "counterparty": "Wise Payroll"
+  },
+  {
+    "id": "txn_hmrc_q1",
+    "date": "2026-04-07",
+    "description": "HMRC VAT Q1-2026",
+    "amount": -28400.00,
+    "currency": "GBP",
+    "counterparty": "HMRC"
+  },
+  {
+    "id": "txn_vendor_acme_mar",
+    "date": "2026-03-15",
+    "description": "ACME HOSTING LTD INV-1022",
+    "amount": -1200.00,
+    "currency": "GBP",
+    "counterparty": "Acme Hosting Ltd"
+  },
+  {
+    "id": "txn_vendor_acme_feb",
+    "date": "2026-02-15",
+    "description": "ACME HOSTING LTD INV-1021",
+    "amount": -1200.00,
+    "currency": "GBP",
+    "counterparty": "Acme Hosting Ltd"
+  },
+  {
+    "id": "txn_vendor_dataflow_apr",
+    "date": "2026-04-10",
+    "description": "DATAFLOW SOLUTIONS RETAINER",
+    "amount": -2100.00,
+    "currency": "GBP",
+    "counterparty": "DataFlow Solutions"
+  },
+  {
+    "id": "txn_vendor_fastnet_apr",
+    "date": "2026-04-19",
+    "description": "FASTNET TELECOMS APR2026",
+    "amount": -320.00,
+    "currency": "GBP",
+    "counterparty": "FastNet Telecoms"
+  },
+  {
+    "id": "txn_vendor_office_apr",
+    "date": "2026-04-25",
+    "description": "OFFICESUPPLIES CO OS-0412",
+    "amount": -145.60,
+    "currency": "GBP",
+    "counterparty": "OfficeSupplies Co"
+  },
+  {
+    "id": "txn_vendor_riley_mar",
+    "date": "2026-03-22",
+    "description": "RILEY DESIGNS BRAND WORK",
+    "amount": -480.00,
+    "currency": "GBP",
+    "counterparty": "Riley Designs"
+  },
+  {
+    "id": "txn_github",
+    "date": "2026-04-10",
+    "description": "GITHUB INC TEAM",
+    "amount": -210.00,
+    "currency": "GBP",
+    "counterparty": "GitHub"
+  },
+  {
+    "id": "txn_vercel",
+    "date": "2026-04-01",
+    "description": "VERCEL INC SUBSCRIPTION",
+    "amount": -240.00,
+    "currency": "GBP",
+    "counterparty": "Vercel"
+  },
+  {
+    "id": "txn_linear",
+    "date": "2026-04-03",
+    "description": "LINEAR APP TEAM PLAN",
+    "amount": -82.00,
+    "currency": "GBP",
+    "counterparty": "Linear"
+  },
+  {
+    "id": "txn_notion",
+    "date": "2026-04-05",
+    "description": "NOTION LABS WORKSPACE",
+    "amount": -56.00,
+    "currency": "GBP",
+    "counterparty": "Notion"
+  },
+  {
+    "id": "txn_figma",
+    "date": "2026-04-07",
+    "description": "FIGMA INC ANNUAL",
+    "amount": -180.00,
+    "currency": "GBP",
+    "counterparty": "Figma"
+  },
+  {
+    "id": "txn_anomaly_globex_consult",
+    "date": "2026-04-22",
+    "description": "BACS DEBIT GLOBEX CONSULTING LLP REF 88134",
+    "amount": -8500.00,
+    "currency": "GBP",
+    "counterparty": "Globex Consulting LLP"
+  },
+  {
+    "id": "txn_unknown_dd",
+    "date": "2026-04-10",
+    "description": "REF 8819XQ DD COLLECT",
+    "amount": -245.00,
+    "currency": "GBP",
+    "counterparty": "Unknown Direct Debit"
+  },
+  {
+    "id": "txn_unknown_card",
+    "date": "2026-04-18",
+    "description": "POS 22:14 *PMNT 41Z",
+    "amount": -67.50,
+    "currency": "GBP",
+    "counterparty": "Unknown"
+  },
+  {
+    "id": "txn_inflow_globex",
+    "date": "2026-04-12",
+    "description": "FASTER PAYMENT GLOBEX CORP",
+    "amount": 18000.00,
+    "currency": "GBP",
+    "counterparty": "Globex Corp"
+  },
+  {
+    "id": "txn_inflow_globex_mar",
+    "date": "2026-03-12",
+    "description": "FASTER PAYMENT GLOBEX CORP",
+    "amount": 18000.00,
+    "currency": "GBP",
+    "counterparty": "Globex Corp"
+  },
+  {
+    "id": "txn_inflow_initech",
+    "date": "2026-04-19",
+    "description": "FASTER PAYMENT INITECH LTD",
+    "amount": 24500.00,
+    "currency": "GBP",
+    "counterparty": "Initech"
+  },
+  {
+    "id": "txn_inflow_initech_mar",
+    "date": "2026-03-19",
+    "description": "FASTER PAYMENT INITECH LTD",
+    "amount": 22000.00,
+    "currency": "GBP",
+    "counterparty": "Initech"
+  },
+  {
+    "id": "txn_inflow_hooli",
+    "date": "2026-04-25",
+    "description": "FASTER PAYMENT HOOLI INC",
+    "amount": 12000.00,
+    "currency": "GBP",
+    "counterparty": "Hooli"
+  },
+  {
+    "id": "txn_inflow_stripe",
+    "date": "2026-04-22",
+    "description": "STRIPE PAYOUT 4QH82",
+    "amount": 6420.85,
+    "currency": "GBP",
+    "counterparty": "Stripe Payouts"
+  },
+  {
+    "id": "txn_inflow_pied_piper",
+    "date": "2026-03-22",
+    "description": "FASTER PAYMENT PIED PIPER",
+    "amount": 3200.00,
+    "currency": "GBP",
+    "counterparty": "Pied Piper"
+  }
+]
