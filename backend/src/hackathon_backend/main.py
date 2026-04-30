@@ -55,6 +55,14 @@ def actions():
     return cashflow_actions.list_actions()
 
 
+@app.get("/actions/{action_id}")
+def action(action_id: str):
+    plan = cashflow_actions.get_action(action_id)
+    if plan is None:
+        raise HTTPException(status_code=404, detail="action not found")
+    return plan
+
+
 @app.post("/actions/{action_id}/approve")
 def approve(action_id: str):
     plan = cashflow_actions.approve_action(action_id)
@@ -67,3 +75,8 @@ def approve(action_id: str):
 def cashflow_forecast(days: int = 90):
     days = max(1, min(days, 180))
     return cashflow_actions.forecast(days=days)
+
+
+@app.get("/cashflow/summary")
+def cashflow_summary():
+    return cashflow_actions.summary()
