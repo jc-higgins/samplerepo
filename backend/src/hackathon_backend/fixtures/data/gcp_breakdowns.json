@@ -1,0 +1,20 @@
+{
+  "txn_gcp_apr": {
+    "source": "gcp",
+    "line_items": [
+      { "label": "GKE (prod)",              "amount": 720.00, "note": "regional 3-node pool" },
+      { "label": "BigQuery (analytics)",    "amount": 410.50, "note": "on-demand scans" },
+      { "label": "Cloud Storage + egress",  "amount": 549.83, "note": "europe-west2" }
+    ],
+    "waste_flag": "BigQuery on-demand spikes on ad-hoc scans \u2014 consider slot reservations."
+  },
+  "txn_gcp_mar": {
+    "source": "gcp",
+    "line_items": [
+      { "label": "GKE (prod)",              "amount": 680.00, "note": "regional 3-node pool" },
+      { "label": "BigQuery (analytics)",    "amount": 355.20, "note": "lower scan volume" },
+      { "label": "Cloud Storage + egress",  "amount": 487.70, "note": "europe-west2" }
+    ],
+    "waste_flag": null
+  }
+}

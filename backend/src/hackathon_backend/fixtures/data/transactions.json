@@ -25,6 +25,22 @@
     "counterparty": "Amazon Web Services"
   },
   {
+    "id": "txn_gcp_apr",
+    "date": "2026-04-18",
+    "description": "GOOGLE CLOUD EMEA LTD",
+    "amount": -1680.33,
+    "currency": "GBP",
+    "counterparty": "Google Cloud"
+  },
+  {
+    "id": "txn_gcp_mar",
+    "date": "2026-03-16",
+    "description": "GOOGLE CLOUD EMEA LTD",
+    "amount": -1522.90,
+    "currency": "GBP",
+    "counterparty": "Google Cloud"
+  },
+  {
     "id": "txn_payroll_apr",
     "date": "2026-04-28",
     "description": "WISE PAYROLL APR2026",
