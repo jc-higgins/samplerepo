@@ -34,3 +34,15 @@ export const approveAction = (id) =>
   fetch(`${apiBase}/actions/${id}/approve`, { method: 'POST' }).then(
     jsonOrThrow
   )
+
+export const startEmailProcessing = () =>
+  fetch(`${apiBase}/emails/process/start`, { method: 'POST' }).then(jsonOrThrow)
+
+export const resetEmailProcessing = () =>
+  fetch(`${apiBase}/emails/process/reset`, { method: 'POST' }).then(jsonOrThrow)
+
+export const pollEmails = () =>
+  fetch(`${apiBase}/emails/poll`).then(jsonOrThrow)
+
+export const getEmailState = () =>
+  fetch(`${apiBase}/emails/state`).then(jsonOrThrow)

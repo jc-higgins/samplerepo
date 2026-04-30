@@ -18,7 +18,7 @@ const money = (n, currency = 'GBP') =>
     minimumFractionDigits: 2,
   }).format(n)
 
-export function Statements({ selectedId, onSelectId }) {
+export function Statements({ selectedId, onSelectId, reloadKey = 0 }) {
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -42,7 +42,7 @@ export function Statements({ selectedId, onSelectId }) {
     return () => {
       cancelled = true
     }
-  }, [reload])
+  }, [reload, reloadKey])
 
   const filtered = useMemo(() => {
     if (category === 'all') return rows

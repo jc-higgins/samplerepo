@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { apiBase, getCashflowSummary, getHealth } from './api.js'
 import { ActionsAndCashflow } from './components/ActionsAndCashflow.jsx'
 import { CloudCostSnapshot } from './components/CloudCostSnapshot.jsx'
+import { EmailNotifier } from './components/EmailNotifier.jsx'
 import { Invoices } from './components/Invoices.jsx'
 import { InvestigationChat } from './components/InvestigationChat.jsx'
 import { Statements } from './components/Statements.jsx'
@@ -21,12 +22,22 @@ export function DashboardShell() {
   const [summary, setSummary] = useState(null)
   const [selectedTxnId, setSelectedTxnId] = useState(null)
   const [selectedInvoiceId, setSelectedInvoiceId] = useState(null)
+  const [txnReloadKey, setTxnReloadKey] = useState(0)
 
   const refreshSummary = useCallback(() => {
     return getCashflowSummary()
       .then(setSummary)
       .catch(() => setSummary(null))
   }, [])
+
+  const handleEmailInjectedTxn = useCallback(
+    (txnId) => {
+      setSelectedTxnId(txnId)
+      setTxnReloadKey((n) => n + 1)
+      refreshSummary()
+    },
+    [refreshSummary]
+  )
 
   useEffect(() => {
     let cancelled = false
@@ -109,6 +120,7 @@ export function DashboardShell() {
               </span>
             </span>
           )}
+          <EmailNotifier onTransactionInjected={handleEmailInjectedTxn} />
           <span
             className={
               'dash-pill dash-pill--status ' +
@@ -174,6 +186,7 @@ export function DashboardShell() {
               <Statements
                 selectedId={selectedTxnId}
                 onSelectId={setSelectedTxnId}
+                reloadKey={txnReloadKey}
               />
             </section>
             <section

@@ -1,0 +1,53 @@
+SAMPLE EMAIL — copy the JSON block below into a Gmail compose window
+addressed to the inbox the backend watches and click Send.
+
+To:      cursorhack2026@gmail.com
+Subject: Receipt — Domino's Pizza team lunch
+
+----------------------------- BODY -----------------------------
+{
+  "type": "receipt",
+  "merchant": "Domino's Pizza",
+  "merchant_email": "no-reply@dominos.co.uk",
+  "order_id": "DPZ-2026-04-30-1471",
+  "datetime": "2026-04-30T19:48:00Z",
+  "description": "DOMINOS PIZZA LONDON SE1 TEAM LUNCH",
+  "items": [
+    { "name": "Large Pepperoni Passion", "qty": 1, "amount": 17.99 },
+    { "name": "Garlic Bread (twin)",     "qty": 1, "amount": 4.99 },
+    { "name": "Cookies (4 pack)",        "qty": 1, "amount": 3.99 },
+    { "name": "Coca-Cola 1.5L",          "qty": 1, "amount": 3.49 }
+  ],
+  "subtotal": 30.46,
+  "delivery_fee": 2.99,
+  "tax": 4.31,
+  "total": 37.76,
+  "currency": "GBP",
+  "payment": { "method": "card", "last4": "4242" },
+  "expense_category": "team-lunch",
+  "match_hint": {
+    "expected_description_contains": "DOMINOS",
+    "amount_tolerance": 0.5,
+    "expected_date": "2026-04-30"
+  }
+}
+---------------------------------------------------------------
+
+Demo loop:
+
+  1. In the dashboard header, click "Process emails". The backend
+     primes its seen-UID set so older messages do not pop up.
+  2. Send the email above to cursorhack2026@gmail.com with the JSON
+     between BODY markers as the plain-text body. (Gmail compose
+     can default to rich text — switch to plain text first.)
+  3. Within ~1 second a popup appears at the bottom-right of the
+     dashboard showing the parsed merchant + total and the id of
+     the live-injected transaction (txn_email_<uid>).
+  4. Click Refresh in Statements to see the new row classified
+     through the same heuristics as historical lines.
+
+Required JSON fields for live transaction injection: "merchant" (or
+"vendor") and "total". Optional: "currency" (default GBP), "datetime"
+or "date" (first 10 chars used as transaction date), "description"
+(overrides the auto-generated description). Everything else is
+surfaced in the popup but ignored by the classifier.

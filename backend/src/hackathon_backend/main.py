@@ -10,6 +10,7 @@ from hackathon_backend.agents import (
     communications,
     cursor_llm,
     data_source,
+    email_inbox,
     invoice_verifier,
     ledger,
 )
@@ -215,3 +216,31 @@ def send_action_email(action_id: str, payload: dict = Body(default={})):
 @app.get("/communications")
 def communications_list():
     return communications.list_communications()
+
+
+@app.post("/emails/process/start")
+def emails_process_start():
+    """Prime the inbox watcher so subsequent polls only return new mail."""
+    return email_inbox.prime()
+
+
+@app.post("/emails/process/reset")
+def emails_process_reset():
+    """Forget the primed state so the next poll re-primes from scratch."""
+    return email_inbox.reset()
+
+
+@app.get("/emails/state")
+def emails_state():
+    return email_inbox.state()
+
+
+@app.get("/emails/poll")
+def emails_poll():
+    """Return any messages that arrived since the previous poll.
+
+    A receipt-shaped JSON body (``{"merchant": ..., "total": ...}``) is
+    parsed into ``receipt`` and best-effort injected as a live raw bank
+    transaction, surfaced as ``injected_transaction_id``.
+    """
+    return email_inbox.poll_new()
