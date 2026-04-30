@@ -1,0 +1,26 @@
+[
+  {
+    "id": "acc_gbp_main",
+    "iban": "GB29 NWBK 6016 1331 9268 00",
+    "currency": "GBP",
+    "name": "Main Operating Account",
+    "bank": "NatWest",
+    "balance": 84320.45
+  },
+  {
+    "id": "acc_gbp_payroll",
+    "iban": "GB44 BARC 2010 0312 3456 00",
+    "currency": "GBP",
+    "name": "Payroll Account",
+    "bank": "Barclays",
+    "balance": 43100.00
+  },
+  {
+    "id": "acc_eur_ops",
+    "iban": "DE89 3704 0044 0532 0130 00",
+    "currency": "EUR",
+    "name": "EU Operations Account",
+    "bank": "Deutsche Bank",
+    "balance": 12450.80
+  }
+]

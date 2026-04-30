@@ -1,6 +1,6 @@
 [
   {
-    "id": "inv_acme_apr",
+    "id": "inv_001",
     "received_at": "2026-04-22T09:14:00Z",
     "channel": "email",
     "sender": "billing@acme-hosting.co.uk",
@@ -10,36 +10,39 @@
     "due_date": "2026-05-06",
     "account_details": "GB29 NWBK 6016 1331 9268 19",
     "thread_id": "thr_acme_legit",
-    "thread_excerpt": "Following our call last week, please find April invoice attached. Same banking details as last quarter \u2014 let me know if anything looks off."
+    "thread_excerpt": "Following our call last week, please find April invoice attached. Same banking details as last quarter.",
+    "urgency": false
   },
   {
-    "id": "inv_acme_susp",
-    "received_at": "2026-04-28T15:42:00Z",
+    "id": "inv_002",
+    "received_at": "2026-04-23T14:02:00Z",
     "channel": "email",
-    "sender": "ar@acmehosting-finance.com",
+    "sender": "billing.urgent@acme-hostings.co.uk",
     "vendor": "Acme Hosting Ltd",
-    "amount": 4500.00,
+    "amount": 1450.00,
     "currency": "GBP",
-    "due_date": "2026-04-30",
-    "account_details": "GB12 NWBK 1234 5678 9000 11",
+    "due_date": "2026-04-24",
+    "account_details": "GB17 BARC 2032 5364 8311 22",
     "thread_id": "thr_acme_susp",
-    "thread_excerpt": "URGENT: please pay ASAP. We have updated bank details (new bank), see attached. Need this settled today to avoid service disruption."
+    "thread_excerpt": "URGENT: Updated bank details — please remit ASAP, prior account suspended.",
+    "urgency": true
   },
   {
-    "id": "inv_unknown_quanta",
-    "received_at": "2026-04-26T11:03:00Z",
+    "id": "inv_003",
+    "received_at": "2026-04-24T11:22:00Z",
     "channel": "email",
-    "sender": "accounts@quanta-services.io",
-    "vendor": "Quanta Services Inc",
-    "amount": 2750.00,
+    "sender": "ar@northbridge-solutions.io",
+    "vendor": "Northbridge Solutions",
+    "amount": 3200.00,
     "currency": "GBP",
-    "due_date": "2026-05-12",
-    "account_details": "GB54 BARC 2003 0455 7882 19",
+    "due_date": "2026-05-08",
+    "account_details": "GB55 RBOS 1612 7733 8290 41",
     "thread_id": null,
-    "thread_excerpt": "Invoice attached for consulting services Q1 2026."
+    "thread_excerpt": "Please find attached invoice for advisory services rendered in Q1 2026.",
+    "urgency": false
   },
   {
-    "id": "inv_riley_wa",
+    "id": "inv_004",
     "received_at": "2026-04-22T17:30:00Z",
     "channel": "whatsapp",
     "sender": "+447700900123",
@@ -49,6 +52,21 @@
     "due_date": "2026-05-05",
     "account_details": "GB12 HSBC 4001 2710 9911 03",
     "thread_id": "thr_riley_wa",
-    "thread_excerpt": "Hey! Sending the brand work invoice through, ping me when paid \u2014 same bank details as last month."
+    "thread_excerpt": "Hey! Sending the brand work invoice through, ping me when paid. Bank details same as last time.",
+    "urgency": false
+  },
+  {
+    "id": "inv_005",
+    "received_at": "2026-04-25T10:05:00Z",
+    "channel": "email",
+    "sender": "accounts@dataflow.io",
+    "vendor": "DataFlow Solutions",
+    "amount": 2100.00,
+    "currency": "GBP",
+    "due_date": "2026-05-10",
+    "account_details": "GB44 BARC 2010 0312 3456 78",
+    "thread_id": "thr_dataflow",
+    "thread_excerpt": "April retainer invoice INV-0091 attached — same details as usual.",
+    "urgency": false
   }
 ]

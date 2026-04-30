@@ -20,13 +20,6 @@
     "known_account": "GB99 HSBC 4001 5099 8123 45",
     "known_email_domain": "fastnet.net"
   },
-  "OfficeSupplies Co": {
-    "name": "OfficeSupplies Co",
-    "first_seen": "2025-11-04",
-    "payment_count": 3,
-    "known_account": "GB12 LOYD 3098 1145 7766 22",
-    "known_email_domain": "officesupplies.co"
-  },
   "Riley Designs": {
     "name": "Riley Designs",
     "first_seen": "2025-11-03",
@@ -41,12 +34,19 @@
     "known_account": "GB66 CITI 1850 0813 2107 88",
     "known_email_domain": "aws.amazon.com"
   },
+  "Google Cloud": {
+    "name": "Google Cloud",
+    "first_seen": "2025-04-15",
+    "payment_count": 8,
+    "known_account": "GB71 CITI 1850 0991 3344 02",
+    "known_email_domain": "google.com"
+  },
   "Wise Payroll": {
     "name": "Wise Payroll",
     "first_seen": "2024-12-01",
     "payment_count": 5,
     "known_account": "GB40 TRWI 2314 7099 8801 32",
-    "known_email_domain": null
+    "known_email_domain": "wise.com"
   },
   "HMRC": {
     "name": "HMRC",

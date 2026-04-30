@@ -21,6 +21,10 @@ def _load(name: str):
     return json.loads((DATA_DIR / name).read_text())
 
 
+def load_accounts():
+    return _load("accounts.json")
+
+
 def load_transactions():
     return _load("transactions.json")
 
