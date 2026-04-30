@@ -246,6 +246,13 @@ def approve_action(action_id: str) -> dict | None:
     return target
 
 
+def reset_overrides() -> int:
+    """Clear all approval overrides — demo replay convenience."""
+    n = len(_action_overrides)
+    _action_overrides.clear()
+    return n
+
+
 # --- Forecast & summary ------------------------------------------------------
 
 

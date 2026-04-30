@@ -114,9 +114,17 @@ def create_transaction(payload: dict = Body(...)):
 
 @app.post("/demo/reset")
 def demo_reset():
-    """Clear all live-injected transactions. Demo-only convenience."""
-    cleared = data_source.reset_injected_transactions()
-    return {"cleared_injected_transactions": cleared}
+    """Wipe all in-memory demo state so the run-through replays cleanly.
+
+    Clears (a) live-injected transactions, (b) action-approval overrides
+    (so ``applied_actions`` is empty and runway returns to baseline),
+    and (c) Cursor-SDK email drafts.
+    """
+    return {
+        "cleared_injected_transactions": data_source.reset_injected_transactions(),
+        "cleared_action_overrides": cashflow_actions.reset_overrides(),
+        "cleared_email_drafts": communications.reset_communications(),
+    }
 
 
 @app.get("/transactions/{txn_id}")
