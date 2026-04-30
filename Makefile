@@ -1,5 +1,5 @@
 # AutoCFO / hackathon — quick setup and demo
-# Requires: uv (https://docs.astral.sh/uv/), Node 18+ with npm
+# Requires: uv (https://docs.astral.sh/uv/), Node 20+ with npm (react-router-dom v7)
 
 SHELL := /bin/bash
 

@@ -15,7 +15,9 @@ Every action is scored with confidence and checked against policy thresholds bef
 
 ## Quick start (Makefile)
 
-**Prerequisites:** [uv](https://docs.astral.sh/uv/), Node 18+, npm, `make`, and `bash` (for `make demo`). Optional: `curl` for `make health`.
+**Prerequisites:** [uv](https://docs.astral.sh/uv/), **Node 20+** (required by `react-router-dom` v7), npm, `make`, and `bash` (for `make demo`). Optional: `curl` for `make health`.
+
+If the UI fails to resolve `react-router-dom`, run **`npm install` inside `frontend/`** from a fresh clone (`make setup` does this). Use Node 20+, not 18.
 
 From the repository root:
 
