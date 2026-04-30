@@ -15,6 +15,7 @@ overridden with ``AUTOCFO_INBOX_USER`` / ``AUTOCFO_INBOX_PASS`` /
 
 from __future__ import annotations
 
+import datetime as _dt
 import email
 import html as _html
 import imaplib
@@ -47,6 +48,24 @@ _SMART_QUOTES = {
     "\u2032": "'",
     "\u2033": '"',
 }
+
+# Demo affordance: every new email triggers the same canned Domino's
+# receipt — we don't bother parsing the actual body. Matches the
+# ``sample_email.txt`` content so the demo story stays consistent.
+_DUMMY_RECEIPT: dict[str, Any] = {
+    "merchant": "Domino's Pizza",
+    "total": 37.76,
+    "currency": "GBP",
+    "description": "DOMINOS PIZZA LONDON SE1 TEAM LUNCH",
+    "order_id": "DP-20260430-001",
+}
+
+
+def _make_dummy_receipt() -> dict[str, Any]:
+    """Return the canned Domino's receipt stamped with today's date."""
+    base = dict(_DUMMY_RECEIPT)
+    base["date"] = _dt.date.today().isoformat()
+    return base
 
 
 def _connect() -> imaplib.IMAP4_SSL:
@@ -266,18 +285,21 @@ def poll_new() -> dict:
                     continue
                 msg = email.message_from_bytes(msg_data[0][1])
                 body = _extract_body(msg)
-                receipt = _try_parse_receipt(body)
+                # Demo: skip parsing entirely — every new email injects
+                # the canned Domino's receipt. Body is still extracted so
+                # the popup can show what the user actually sent.
+                receipt = _make_dummy_receipt()
                 injected_id: str | None = None
                 agent_status = "skipped"
-                if receipt:
-                    raw = _receipt_to_raw_transaction(receipt, uid.decode())
-                    if raw:
-                        try:
-                            data_source.inject_raw_transaction(raw)
-                            injected_id = raw["id"]
-                            agent_status = _kick_off_agent_review(raw)
-                        except Exception:
-                            injected_id = None
+                raw = _receipt_to_raw_transaction(receipt, uid.decode())
+                if raw:
+                    try:
+                        data_source.inject_raw_transaction(raw)
+                        injected_id = raw["id"]
+                        agent_status = _kick_off_agent_review(raw)
+                    except Exception:
+                        LOG.exception("failed to inject dummy txn for uid %s", uid)
+                        injected_id = None
                 excerpt = _strip_html(body).strip() or (body or "").strip()
                 out.append(
                     {
