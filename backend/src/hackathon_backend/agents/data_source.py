@@ -8,6 +8,9 @@ from __future__ import annotations
 from . import seeds
 
 
+_injected_raw_transactions: list[dict] = []
+
+
 def _try_fixtures(loader_name: str, fallback):
     try:
         from hackathon_backend.fixtures import loaders  # type: ignore
@@ -21,7 +24,23 @@ def _try_fixtures(loader_name: str, fallback):
 
 
 def get_raw_transactions() -> list[dict]:
-    return _try_fixtures("load_transactions", seeds.RAW_TRANSACTIONS)
+    base = _try_fixtures("load_transactions", seeds.RAW_TRANSACTIONS)
+    return list(base) + list(_injected_raw_transactions)
+
+
+def inject_raw_transaction(raw: dict) -> None:
+    """Append a raw bank line to the in-memory feed.
+
+    The ledger agent picks it up on the next ``categorize_all()`` call —
+    used by ``POST /transactions`` for live demo injection.
+    """
+    _injected_raw_transactions.append(raw)
+
+
+def reset_injected_transactions() -> int:
+    n = len(_injected_raw_transactions)
+    _injected_raw_transactions.clear()
+    return n
 
 
 def get_aws_breakdowns() -> dict[str, dict]:

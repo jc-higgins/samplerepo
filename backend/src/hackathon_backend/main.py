@@ -1,7 +1,15 @@
-from fastapi import FastAPI, HTTPException
+from datetime import datetime, timezone
+
+from fastapi import Body, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from hackathon_backend.agents import cashflow_actions, cloud_summary, invoice_verifier, ledger
+from hackathon_backend.agents import (
+    cashflow_actions,
+    cloud_summary,
+    data_source,
+    invoice_verifier,
+    ledger,
+)
 
 app = FastAPI(title="AutoCFO API")
 
@@ -27,6 +35,53 @@ def health():
 @app.get("/transactions")
 def transactions():
     return ledger.categorize_all()
+
+
+@app.post("/transactions", status_code=201)
+def create_transaction(payload: dict = Body(...)):
+    """Inject a raw bank line and return the live-classified record.
+
+    Demo affordance: simulates a webhook from the bank. The new transaction
+    flows through the same heuristics as historical ones (categorisation,
+    confidence, anomaly, cloud enrichment if known), and shows up in
+    subsequent ``GET /transactions`` calls.
+    """
+    required = {"description", "amount", "counterparty"}
+    missing = [k for k in required if k not in payload]
+    if missing:
+        raise HTTPException(
+            status_code=400, detail=f"missing fields: {sorted(missing)}"
+        )
+
+    try:
+        amount = float(payload["amount"])
+    except (TypeError, ValueError):
+        raise HTTPException(status_code=400, detail="amount must be a number")
+
+    now = datetime.now(timezone.utc)
+    txn_id = payload.get("id") or f"txn_live_{now.strftime('%Y%m%d_%H%M%S_%f')}"
+
+    raw = {
+        "id": txn_id,
+        "date": payload.get("date") or now.date().isoformat(),
+        "description": str(payload["description"]),
+        "amount": amount,
+        "currency": payload.get("currency", "GBP"),
+        "counterparty": str(payload["counterparty"]),
+    }
+
+    data_source.inject_raw_transaction(raw)
+    classified = ledger.get_transaction(txn_id)
+    if classified is None:
+        raise HTTPException(status_code=500, detail="classification pipeline failed")
+    return classified
+
+
+@app.post("/demo/reset")
+def demo_reset():
+    """Clear all live-injected transactions. Demo-only convenience."""
+    cleared = data_source.reset_injected_transactions()
+    return {"cleared_injected_transactions": cleared}
 
 
 @app.get("/transactions/{txn_id}")
